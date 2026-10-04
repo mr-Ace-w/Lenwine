@@ -1,0 +1,36 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Product {
+  id            String   @id @default(cuid())
+  name          String
+  price         Float
+  originalPrice Float?
+  category      String
+  description   String
+  images        String   // JSON string array of image URLs
+  sizes         String   // Comma separated sizes e.g. "S,M,L,XL"
+  inStock       Boolean  @default(true)
+  isFeatured    Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Order {
+  id              String   @id @default(cuid())
+  customerName    String
+  customerEmail   String
+  customerPhone   String
+  shippingAddress String
+  totalAmount     Float
+  status          String   @default("Pending") // Pending, Processing, Shipped, Delivered
+  items           String   // JSON string of items [{productId, title, size, qty, price}]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
