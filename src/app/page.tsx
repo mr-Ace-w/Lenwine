@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import CartDrawer from '@/components/CartDrawer';
@@ -15,12 +15,22 @@ export default function HomePage() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [allProducts, setAllProducts] = useState<ProductType[]>([]);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     fetch('/api/products')
       .then(res => res.json())
       .then(data => setAllProducts(data))
       .catch(console.error);
+  }, []);
+
+  // Ensure video plays automatically across all browsers
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play().catch((err) => {
+        console.log('Video autoplay interaction catch:', err);
+      });
+    }
   }, []);
 
   return (
@@ -33,19 +43,16 @@ export default function HomePage() {
         <div className="absolute inset-0 z-0">
           {/* Background Video Player */}
           <video
+            ref={videoRef}
             autoPlay
             loop
             muted
             playsInline
+            preload="auto"
+            poster="/hero-blue.jpg"
             className="w-full h-full object-cover filter contrast-[1.08]"
           >
             <source src="/hero.mp4" type="video/mp4" />
-            {/* Fallback image if video is loading or missing */}
-            <img
-              src="/hero-blue.jpg"
-              alt="LENWINE Campaign"
-              className="w-full h-full object-cover"
-            />
           </video>
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/20" />
         </div>
