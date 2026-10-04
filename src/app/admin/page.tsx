@@ -15,10 +15,18 @@ import {
   RefreshCw,
   X,
   Upload,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Lock,
+  LogOut,
+  KeyRound
 } from 'lucide-react';
 
 export default function AdminPage() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [authError, setAuthError] = useState('');
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+
   const [activeTab, setActiveTab] = useState<'dashboard' | 'products' | 'orders'>('dashboard');
   const [products, setProducts] = useState<ProductType[]>([]);
   const [orders, setOrders] = useState<OrderType[]>([]);
@@ -38,6 +46,47 @@ export default function AdminPage() {
     inStock: true,
     isFeatured: true
   });
+
+  // Check auth session on load
+  useEffect(() => {
+    const sessionAuth = sessionStorage.getItem('lenwine_admin_auth');
+    if (sessionAuth === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAuthError('');
+    setIsAuthenticating(true);
+
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: passwordInput })
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        sessionStorage.setItem('lenwine_admin_auth', 'true');
+        setIsAuthenticated(true);
+        setPasswordInput('');
+      } else {
+        setAuthError(data.error || 'Невірний пароль!');
+      }
+    } catch (err) {
+      setAuthError('Помилка сервера при вході');
+    } finally {
+      setIsAuthenticating(false);
+    }
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('lenwine_admin_auth');
+    setIsAuthenticated(false);
+  };
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -62,8 +111,10 @@ export default function AdminPage() {
   };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (isAuthenticated) {
+      fetchData();
+    }
+  }, [isAuthenticated]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -188,6 +239,71 @@ export default function AdminPage() {
   const totalOrdersCount = orders.length;
   const totalProductsCount = products.length;
 
+  // LOGIN SCREEN FOR UNAUTHENTICATED USERS
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6 selection:bg-white selection:text-black">
+        <div className="w-full max-w-sm space-y-8 text-center animate-fade-in">
+          {/* Logo & Header */}
+          <div className="flex flex-col items-center space-y-4">
+            <div className="relative w-44 h-12">
+              <Image src="/logo-white.png" alt="LENWINE" fill className="object-contain" priority />
+            </div>
+            <div className="flex items-center space-x-2 text-neutral-400 font-mono text-xs uppercase tracking-[0.3em]">
+              <Lock className="w-3.5 h-3.5 text-neutral-500" />
+              <span>[ADMIN SYSTEM ACCESS]</span>
+            </div>
+          </div>
+
+          {/* Password Form */}
+          <form onSubmit={handleLogin} className="space-y-4 text-left">
+            <div>
+              <label className="block text-[10px] font-mono uppercase tracking-[0.2em] text-neutral-400 mb-2">
+                ВВЕДІТЬ ПАРОЛЬ АДМІНІСТРАТОРА
+              </label>
+              <div className="relative">
+                <input
+                  type="password"
+                  required
+                  placeholder="••••••••••••"
+                  value={passwordInput}
+                  onChange={(e) => setPasswordInput(e.target.value)}
+                  className="w-full bg-neutral-900 border border-neutral-800 focus:border-white text-white p-3.5 pl-10 text-sm outline-hidden transition-colors font-mono"
+                />
+                <KeyRound className="w-4 h-4 text-neutral-500 absolute left-3.5 top-4" />
+              </div>
+            </div>
+
+            {authError && (
+              <div className="p-3 bg-red-950/60 border border-red-800 text-red-400 text-xs font-mono uppercase tracking-wider text-center">
+                ⚠️ {authError}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={isAuthenticating}
+              className="w-full bg-white text-black py-3.5 text-xs font-extrabold uppercase tracking-[0.2em] hover:bg-neutral-200 transition-colors disabled:opacity-50"
+            >
+              {isAuthenticating ? 'АВТОРИЗАЦІЯ...' : 'УВІЙТИ В СИСТЕМУ'}
+            </button>
+          </form>
+
+          <div className="pt-4 border-t border-neutral-900">
+            <Link
+              href="/"
+              className="inline-flex items-center space-x-2 text-xs font-mono text-neutral-500 hover:text-white transition-colors uppercase tracking-widest"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>ПОВЕРНУТИСЯ ДО МАГАЗИНУ</span>
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // MAIN ADMIN DASHBOARD WHEN AUTHENTICATED
   return (
     <div className="min-h-screen bg-white text-black font-sans selection:bg-black selection:text-white">
       {/* Top Header Bar */}
@@ -211,13 +327,23 @@ export default function AdminPage() {
           </div>
         </div>
 
-        <button
-          onClick={fetchData}
-          className="p-2 bg-neutral-100 hover:bg-neutral-200 text-black border border-neutral-300 transition-colors flex items-center space-x-2 text-xs font-bold uppercase tracking-wider"
-        >
-          <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-          <span className="hidden sm:inline">ОНОВИТИ ДАНІ</span>
-        </button>
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={fetchData}
+            className="p-2 bg-neutral-100 hover:bg-neutral-200 text-black border border-neutral-300 transition-colors flex items-center space-x-2 text-xs font-bold uppercase tracking-wider"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
+            <span className="hidden sm:inline">ОНОВИТИ ДАНІ</span>
+          </button>
+
+          <button
+            onClick={handleLogout}
+            className="p-2 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 transition-colors flex items-center space-x-2 text-xs font-bold uppercase tracking-wider"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">ВИХІД</span>
+          </button>
+        </div>
       </header>
 
       {/* Main Container */}
