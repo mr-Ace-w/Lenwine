@@ -1,15 +1,65 @@
+import fs from 'fs';
+import path from 'path';
 import { initialProducts, initialOrders, ProductType, OrderType } from './products-data';
 import { supabase } from './supabase';
 
-let globalProducts: ProductType[] = [...initialProducts];
-let globalOrders: OrderType[] = [...initialOrders];
+const productsFilePath = path.join(process.cwd(), 'src/data/products.json');
+const ordersFilePath = path.join(process.cwd(), 'src/data/orders.json');
+
+function readLocalProducts(): ProductType[] {
+  try {
+    if (fs.existsSync(productsFilePath)) {
+      const data = fs.readFileSync(productsFilePath, 'utf-8');
+      return JSON.parse(data);
+    }
+  } catch (err) {
+    console.error('Error reading local products.json:', err);
+  }
+  return initialProducts;
+}
+
+function writeLocalProducts(products: ProductType[]) {
+  try {
+    const dir = path.dirname(productsFilePath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(productsFilePath, JSON.stringify(products, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('Error writing local products.json:', err);
+  }
+}
+
+function readLocalOrders(): OrderType[] {
+  try {
+    if (fs.existsSync(ordersFilePath)) {
+      const data = fs.readFileSync(ordersFilePath, 'utf-8');
+      return JSON.parse(data);
+    }
+  } catch (err) {
+    console.error('Error reading local orders.json:', err);
+  }
+  return initialOrders;
+}
+
+function writeLocalOrders(orders: OrderType[]) {
+  try {
+    const dir = path.dirname(ordersFilePath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    fs.writeFileSync(ordersFilePath, JSON.stringify(orders, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('Error writing local orders.json:', err);
+  }
+}
 
 export const getProducts = async (): Promise<ProductType[]> => {
   if (supabase) {
     try {
       const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
-      if (!error && data && data.length > 0) {
-        return data.map(item => ({
+      if (!error && data) {
+        const formatted: ProductType[] = data.map(item => ({
           id: item.id,
           name: item.name,
           price: Number(item.price),
@@ -21,12 +71,14 @@ export const getProducts = async (): Promise<ProductType[]> => {
           inStock: item.in_stock !== false,
           isFeatured: Boolean(item.is_featured)
         }));
+        writeLocalProducts(formatted);
+        return formatted;
       }
     } catch (err) {
-      console.error('Supabase fetch error, using local fallback:', err);
+      console.error('Supabase fetch error, using local file:', err);
     }
   }
-  return globalProducts;
+  return readLocalProducts();
 };
 
 export const getProductById = async (id: string): Promise<ProductType | undefined> => {
@@ -36,6 +88,10 @@ export const getProductById = async (id: string): Promise<ProductType | undefine
 
 export const createProduct = async (productData: Omit<ProductType, 'id'>): Promise<ProductType> => {
   const newId = `len-${Date.now().toString().slice(-5)}`;
+  const newProduct: ProductType = {
+    ...productData,
+    id: newId
+  };
 
   if (supabase) {
     try {
@@ -55,31 +111,20 @@ export const createProduct = async (productData: Omit<ProductType, 'id'>): Promi
       ]).select().single();
 
       if (!error && data) {
-        const created: ProductType = {
-          id: data.id,
-          name: data.name,
-          price: Number(data.price),
-          originalPrice: data.original_price ? Number(data.original_price) : undefined,
-          category: data.category,
-          description: data.description || '',
-          images: Array.isArray(data.images) ? data.images : [data.images],
-          sizes: Array.isArray(data.sizes) ? data.sizes : ['S', 'M', 'L'],
-          inStock: data.in_stock,
-          isFeatured: data.is_featured
-        };
-        globalProducts.unshift(created);
-        return created;
+        console.log('Product created in Supabase DB:', data.id);
+      } else {
+        console.warn('Supabase insert warning (falling back to disk JSON):', error?.message);
       }
     } catch (err) {
       console.error('Supabase product create error:', err);
     }
   }
 
-  const newProduct: ProductType = {
-    ...productData,
-    id: newId
-  };
-  globalProducts.unshift(newProduct);
+  // Update local disk storage
+  const current = readLocalProducts();
+  const updated = [newProduct, ...current];
+  writeLocalProducts(updated);
+
   return newProduct;
 };
 
@@ -102,32 +147,40 @@ export const updateProduct = async (id: string, productData: Partial<ProductType
     }
   }
 
-  const index = globalProducts.findIndex(p => p.id === id);
+  const current = readLocalProducts();
+  const index = current.findIndex(p => p.id === id);
   if (index === -1) return null;
-  globalProducts[index] = { ...globalProducts[index], ...productData };
-  return globalProducts[index];
+  current[index] = { ...current[index], ...productData };
+  writeLocalProducts(current);
+
+  return current[index];
 };
 
 export const deleteProduct = async (id: string): Promise<boolean> => {
   if (supabase) {
     try {
-      await supabase.from('products').delete().eq('id', id);
+      const { error } = await supabase.from('products').delete().eq('id', id);
+      if (error) {
+        console.warn('Supabase delete warning:', error.message);
+      }
     } catch (err) {
       console.error('Supabase delete error:', err);
     }
   }
 
-  const initialLength = globalProducts.length;
-  globalProducts = globalProducts.filter(p => p.id !== id);
-  return globalProducts.length < initialLength;
+  const current = readLocalProducts();
+  const updated = current.filter(p => p.id !== id);
+  writeLocalProducts(updated);
+
+  return true;
 };
 
 export const getOrders = async (): Promise<OrderType[]> => {
   if (supabase) {
     try {
       const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
-      if (!error && data && data.length > 0) {
-        return data.map(ord => ({
+      if (!error && data) {
+        const formatted: OrderType[] = data.map(ord => ({
           id: ord.id,
           customerName: ord.customer_name,
           customerEmail: ord.customer_email,
@@ -138,16 +191,24 @@ export const getOrders = async (): Promise<OrderType[]> => {
           items: typeof ord.items === 'string' ? JSON.parse(ord.items) : ord.items,
           createdAt: ord.created_at
         }));
+        writeLocalOrders(formatted);
+        return formatted;
       }
     } catch (err) {
       console.error('Supabase orders fetch error:', err);
     }
   }
-  return globalOrders;
+  return readLocalOrders();
 };
 
 export const createOrder = async (orderData: Omit<OrderType, 'id' | 'createdAt' | 'status'>): Promise<OrderType> => {
   const newId = `ORD-${Math.floor(1000 + Math.random() * 9000)}`;
+  const newOrder: OrderType = {
+    ...orderData,
+    id: newId,
+    status: 'Pending',
+    createdAt: new Date().toISOString()
+  };
 
   if (supabase) {
     try {
@@ -165,32 +226,17 @@ export const createOrder = async (orderData: Omit<OrderType, 'id' | 'createdAt' 
       ]).select().single();
 
       if (!error && data) {
-        const created: OrderType = {
-          id: data.id,
-          customerName: data.customer_name,
-          customerEmail: data.customer_email,
-          customerPhone: data.customer_phone,
-          shippingAddress: data.shipping_address,
-          totalAmount: Number(data.total_amount),
-          status: data.status,
-          items: typeof data.items === 'string' ? JSON.parse(data.items) : data.items,
-          createdAt: data.created_at
-        };
-        globalOrders.unshift(created);
-        return created;
+        console.log('Order created in Supabase DB:', data.id);
       }
     } catch (err) {
       console.error('Supabase order create error:', err);
     }
   }
 
-  const newOrder: OrderType = {
-    ...orderData,
-    id: newId,
-    status: 'Pending',
-    createdAt: new Date().toISOString()
-  };
-  globalOrders.unshift(newOrder);
+  const current = readLocalOrders();
+  const updated = [newOrder, ...current];
+  writeLocalOrders(updated);
+
   return newOrder;
 };
 
@@ -203,8 +249,11 @@ export const updateOrderStatus = async (id: string, status: OrderType['status'])
     }
   }
 
-  const order = globalOrders.find(o => o.id === id);
+  const current = readLocalOrders();
+  const order = current.find(o => o.id === id);
   if (!order) return null;
   order.status = status;
+  writeLocalOrders(current);
+
   return order;
 };

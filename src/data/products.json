@@ -1,0 +1,33 @@
+[
+  {
+    "id": "len-001",
+    "name": "LENWINE DISTRESSED LEATHER BIKER JACKET",
+    "price": 18900,
+    "originalPrice": 22000,
+    "category": "MEN",
+    "description": "Premium washed lambskin leather jacket featuring hand-distressed detailing, custom silver hardware, and signature oversized silhouette inspired by punk couture aesthetics.",
+    "images": [
+      "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1520975954732-35dd22299614?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&q=80&w=1000"
+    ],
+    "sizes": ["S", "M", "L", "XL"],
+    "inStock": true,
+    "isFeatured": true
+  },
+  {
+    "id": "len-002",
+    "name": "ENFANTS EMBROIDERY SILK DRESS SHIRT",
+    "price": 8400,
+    "category": "MEN",
+    "description": "100% Mulberry silk woven shirt with raw edge embroidery detailing along the cuffs and classic point collar. Ultra-refined draping.",
+    "images": [
+      "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&q=80&w=1000",
+      "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&q=80&w=1000"
+    ],
+    "sizes": ["S", "M", "L"],
+    "inStock": true,
+    "isFeatured": true
+  }
+]
