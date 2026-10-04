@@ -4,8 +4,8 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ProductType, OrderType } from '@/lib/products-data';
+import { uploadImageToSupabase } from '@/lib/supabase';
 import {
-  Shield,
   Plus,
   Package,
   ShoppingBag,
@@ -14,6 +14,7 @@ import {
   ArrowLeft,
   RefreshCw,
   X,
+  Upload,
   Image as ImageIcon
 } from 'lucide-react';
 
@@ -22,6 +23,7 @@ export default function AdminPage() {
   const [products, setProducts] = useState<ProductType[]>([]);
   const [orders, setOrders] = useState<OrderType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
 
   // New product modal form state
   const [isAddProductOpen, setIsAddProductOpen] = useState(false);
@@ -62,6 +64,31 @@ export default function AdminPage() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setIsUploading(true);
+    const uploadedUrls: string[] = [];
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const url = await uploadImageToSupabase(file);
+      if (url) {
+        uploadedUrls.push(url);
+      }
+    }
+
+    if (uploadedUrls.length > 0) {
+      const currentText = newProduct.imagesText.trim();
+      const newText = currentText ? `${currentText}\n${uploadedUrls.join('\n')}` : uploadedUrls.join('\n');
+      setNewProduct({ ...newProduct, imagesText: newText });
+    } else {
+      alert('Підказка: Переконайся, що в файлі .env.local заповнено NEXT_PUBLIC_SUPABASE_URL та NEXT_PUBLIC_SUPABASE_ANON_KEY!');
+    }
+    setIsUploading(false);
+  };
 
   const handleCreateProduct = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,13 +156,11 @@ export default function AdminPage() {
     }
   };
 
-  // Preview parsed image URLs
   const previewImages = newProduct.imagesText
     .split(/[\n,]+/)
     .map(url => url.trim())
     .filter(Boolean);
 
-  // Stats calculation
   const totalRevenue = orders.reduce((sum, o) => sum + o.totalAmount, 0);
   const totalOrdersCount = orders.length;
   const totalProductsCount = products.length;
@@ -492,11 +517,26 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              {/* Multiple Images URL Input */}
+              {/* Multiple Images Upload & Text Input */}
               <div>
-                <label className="block text-[10px] uppercase text-neutral-500 font-bold mb-1">
-                  ПОСИЛАННЯ НА ФОТОГРАФІЇ (МОЖНА ДОДАТИ КІЛЬКА ФОТО З НОВОГО РЯДКА АБО ЧЕРЕЗ КОМУ) *
-                </label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-[10px] uppercase text-neutral-500 font-bold">
+                    ФОТОГРАФІЇ (URL АБО ЗАВАНТАЖЕННЯ) *
+                  </label>
+                  <label className="cursor-pointer text-[10px] font-bold text-amber-800 bg-amber-100 hover:bg-amber-200 border border-amber-300 px-2.5 py-1 flex items-center space-x-1 uppercase">
+                    <Upload className="w-3 h-3" />
+                    <span>{isUploading ? 'ЗАВАНТАЖЕННЯ...' : 'ОБРАТИ ФАЙЛИ З КОМП\'ЮТЕРА'}</span>
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={handleFileUpload}
+                      disabled={isUploading}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+
                 <textarea
                   required
                   rows={3}

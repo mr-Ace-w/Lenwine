@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { Menu, X, Search, ShoppingBag } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 
@@ -12,7 +13,13 @@ interface HeaderProps {
 
 export default function Header({ onSearchClick }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const pathname = usePathname();
   const { totalCount, setIsCartOpen } = useCart();
+
+  // Determine theme color based on page route: White on Homepage (/), Black on other pages
+  const isHomePage = pathname === '/';
+  const logoSrc = isHomePage ? '/logo-white.png' : '/logo-black.png';
+  const textColor = isHomePage ? 'text-white' : 'text-black';
 
   const menuItems = [
     { label: 'ALL PRODUCTS', href: '/catalog' },
@@ -24,14 +31,14 @@ export default function Header({ onSearchClick }: HeaderProps) {
   return (
     <>
       {/* Fixed Sticky Header - Completely Transparent Floating over content */}
-      <header className="fixed top-0 left-0 right-0 z-40 bg-transparent text-black pt-6 sm:pt-8 pb-4 pointer-events-none">
+      <header className={`fixed top-0 left-0 right-0 z-40 bg-transparent ${textColor} pt-6 sm:pt-8 pb-4 pointer-events-none`}>
         <div className="max-w-[1750px] mx-auto px-6 sm:px-12 flex items-center justify-between pointer-events-auto">
-          {/* Left: Pulled Far-Left Larger LENWINE Brand Logo Image */}
+          {/* Left: Far-Left LENWINE Logo Image (White on homepage, Black on other pages) */}
           <div>
             <Link href="/" className="group flex items-center">
-              <div className="relative h-8 sm:h-10 w-44 sm:w-60 group-hover:opacity-60 transition-opacity">
+              <div className="relative h-8 sm:h-10 w-44 sm:w-60 group-hover:opacity-75 transition-opacity">
                 <Image
-                  src="/logo-black.png"
+                  src={logoSrc}
                   alt="LENWINE"
                   fill
                   className="object-contain object-left"
@@ -41,15 +48,13 @@ export default function Header({ onSearchClick }: HeaderProps) {
             </Link>
           </div>
 
-          {/* Center Links Completely Removed */}
-
-          {/* Right: Larger Icons (Search, Cart, Burger Menu) */}
-          <div className="flex items-center space-x-6 sm:space-x-8 text-black">
+          {/* Right: Icons (Search, Cart, Burger Menu) */}
+          <div className={`flex items-center space-x-6 sm:space-x-8 ${textColor}`}>
             {/* Search Icon */}
             <button
               onClick={onSearchClick}
               aria-label="Search"
-              className="p-1 hover:opacity-50 transition-opacity"
+              className="p-1 hover:opacity-70 transition-opacity"
             >
               <Search className="w-6 h-6 stroke-[1.8]" />
             </button>
@@ -58,7 +63,7 @@ export default function Header({ onSearchClick }: HeaderProps) {
             <button
               onClick={() => setIsCartOpen(true)}
               aria-label="Cart"
-              className="relative p-1 hover:opacity-50 transition-opacity flex items-center space-x-1"
+              className="relative p-1 hover:opacity-70 transition-opacity flex items-center space-x-1"
             >
               <ShoppingBag className="w-6 h-6 stroke-[1.8]" />
               {totalCount > 0 && (
@@ -66,11 +71,11 @@ export default function Header({ onSearchClick }: HeaderProps) {
               )}
             </button>
 
-            {/* Larger Burger Menu Trigger */}
+            {/* Burger Menu Trigger */}
             <button
               onClick={() => setIsMenuOpen(true)}
               aria-label="Open Menu"
-              className="p-1 hover:opacity-50 transition-opacity flex items-center justify-center"
+              className="p-1 hover:opacity-70 transition-opacity flex items-center justify-center"
             >
               <Menu className="w-7 h-7 sm:w-8 sm:h-8 stroke-[1.8]" />
             </button>
@@ -83,7 +88,7 @@ export default function Header({ onSearchClick }: HeaderProps) {
         <div className="fixed inset-0 z-50 flex justify-end">
           {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-black/40 backdrop-blur-xs transition-opacity"
+            className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity"
             onClick={() => setIsMenuOpen(false)}
           />
 
