@@ -74,9 +74,32 @@ export default function AdminPage() {
 
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      const url = await uploadImageToSupabase(file);
-      if (url) {
-        uploadedUrls.push(url);
+
+      // Try uploading to Cloudflare R2 via /api/upload
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const res = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.url) {
+            uploadedUrls.push(data.url);
+            continue;
+          }
+        }
+      } catch (err) {
+        console.error('R2 upload failed, trying fallback:', err);
+      }
+
+      // Fallback: Supabase Storage
+      const fallbackUrl = await uploadImageToSupabase(file);
+      if (fallbackUrl) {
+        uploadedUrls.push(fallbackUrl);
       }
     }
 
@@ -85,7 +108,7 @@ export default function AdminPage() {
       const newText = currentText ? `${currentText}\n${uploadedUrls.join('\n')}` : uploadedUrls.join('\n');
       setNewProduct({ ...newProduct, imagesText: newText });
     } else {
-      alert('Підказка: Переконайся, що в файлі .env.local заповнено NEXT_PUBLIC_SUPABASE_URL та NEXT_PUBLIC_SUPABASE_ANON_KEY!');
+      alert('Переконайся, що у файлі .env.local заповнено ключі Cloudflare R2 (R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY) або Supabase!');
     }
     setIsUploading(false);
   };
@@ -517,15 +540,15 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              {/* Multiple Images Upload & Text Input */}
+              {/* Cloudflare R2 / Supabase Upload */}
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <label className="block text-[10px] uppercase text-neutral-500 font-bold">
-                    ФОТОГРАФІЇ (URL АБО ЗАВАНТАЖЕННЯ) *
+                    ФОТОГРАФІЇ (CLOUDFLARE R2 / URL) *
                   </label>
-                  <label className="cursor-pointer text-[10px] font-bold text-amber-800 bg-amber-100 hover:bg-amber-200 border border-amber-300 px-2.5 py-1 flex items-center space-x-1 uppercase">
+                  <label className="cursor-pointer text-[10px] font-bold text-blue-900 bg-blue-100 hover:bg-blue-200 border border-blue-300 px-2.5 py-1 flex items-center space-x-1 uppercase">
                     <Upload className="w-3 h-3" />
-                    <span>{isUploading ? 'ЗАВАНТАЖЕННЯ...' : 'ОБРАТИ ФАЙЛИ З КОМП\'ЮТЕРА'}</span>
+                    <span>{isUploading ? 'ЗАВАНТАЖЕННЯ В R2...' : 'ОБРАТИ ФАЙЛИ ДЛЯ R2'}</span>
                     <input
                       type="file"
                       multiple
@@ -540,7 +563,7 @@ export default function AdminPage() {
                 <textarea
                   required
                   rows={3}
-                  placeholder={`https://domain.com/photo1.jpg\nhttps://domain.com/photo2.jpg`}
+                  placeholder={`https://pub-xxx.r2.dev/products/photo1.jpg\nhttps://domain.com/photo2.jpg`}
                   value={newProduct.imagesText}
                   onChange={e => setNewProduct({ ...newProduct, imagesText: e.target.value })}
                   className="w-full bg-white border border-neutral-300 p-2.5 focus:border-black outline-hidden font-mono text-[11px]"

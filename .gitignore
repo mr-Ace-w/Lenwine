@@ -26,9 +26,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# database
+# database & media binaries
 dev.db
 dev.db-journal
+public/*.mp4
+*.mp4
 
 # OS files
 .DS_Store
