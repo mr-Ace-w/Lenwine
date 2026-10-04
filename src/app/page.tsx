@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import Header from '@/components/Header';
 import CartDrawer from '@/components/CartDrawer';
 import SearchModal from '@/components/SearchModal';
@@ -27,23 +28,25 @@ export default function HomePage() {
       {/* Completely Transparent Floating Header overlaying Hero */}
       <Header onSearchClick={() => setIsSearchOpen(true)} />
 
-      {/* Pure Editorial Lookbook Hero - Starts at TOP 0 (No padding top) */}
+      {/* Pure Editorial Lookbook Hero - 2 SIDE-BY-SIDE ARTWORK PHOTOS */}
       <section className="relative min-h-screen w-full grid grid-cols-1 md:grid-cols-2">
-        {/* Left Column - ALL PRODUCTS */}
+        {/* Left Column - BLUE ARTWORK (ALL PRODUCTS) */}
         <Link
           href="/catalog"
-          className="group relative h-screen w-full overflow-hidden bg-neutral-900 cursor-pointer"
+          className="group relative h-screen w-full overflow-hidden bg-neutral-950 cursor-pointer"
         >
-          <img
-            src="https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&q=80&w=1400"
-            alt="ALL PRODUCTS"
-            className="w-full h-full object-cover object-top filter contrast-[1.08] transition-transform duration-700 ease-out group-hover:scale-105"
+          <Image
+            src="/hero-blue.jpg"
+            alt="ALL PRODUCTS - LENWINE BLUE"
+            fill
+            className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+            priority
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-80 group-hover:opacity-60 transition-opacity" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-70 group-hover:opacity-50 transition-opacity" />
 
           {/* Collection Title Overlay on Photo */}
           <div className="absolute bottom-10 left-10 sm:bottom-14 sm:left-14 z-10">
-            <span className="text-white font-extrabold text-lg sm:text-2xl tracking-[0.2em] uppercase group-hover:underline underline-offset-8 drop-shadow-md">
+            <span className="text-white font-extrabold text-lg sm:text-2xl tracking-[0.2em] uppercase group-hover:underline underline-offset-8 drop-shadow-lg">
               ALL PRODUCTS
             </span>
             <span className="block text-[10px] text-neutral-300 font-mono tracking-[0.3em] uppercase mt-1">
@@ -52,21 +55,23 @@ export default function HomePage() {
           </div>
         </Link>
 
-        {/* Right Column - SELECT COLLECTION */}
+        {/* Right Column - RED ARTWORK (SELECT COLLECTION) */}
         <Link
           href="/catalog?category=MEN"
-          className="group relative h-screen w-full overflow-hidden bg-neutral-900 cursor-pointer"
+          className="group relative h-screen w-full overflow-hidden bg-neutral-950 cursor-pointer"
         >
-          <img
-            src="https://images.unsplash.com/photo-1539533018447-63fcce2678e3?auto=format&fit=crop&q=80&w=1400"
-            alt="SELECT COLLECTION"
-            className="w-full h-full object-cover object-top filter contrast-[1.08] transition-transform duration-700 ease-out group-hover:scale-105"
+          <Image
+            src="/hero-red.jpg"
+            alt="SELECT COLLECTION - LENWINE RED"
+            fill
+            className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+            priority
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-80 group-hover:opacity-60 transition-opacity" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-70 group-hover:opacity-50 transition-opacity" />
 
           {/* Collection Title Overlay on Photo */}
           <div className="absolute bottom-10 right-10 sm:bottom-14 sm:right-14 z-10 text-right">
-            <span className="text-white font-extrabold text-lg sm:text-2xl tracking-[0.2em] uppercase group-hover:underline underline-offset-8 drop-shadow-md">
+            <span className="text-white font-extrabold text-lg sm:text-2xl tracking-[0.2em] uppercase group-hover:underline underline-offset-8 drop-shadow-lg">
               SELECT COLLECTION
             </span>
             <span className="block text-[10px] text-neutral-300 font-mono tracking-[0.3em] uppercase mt-1">
