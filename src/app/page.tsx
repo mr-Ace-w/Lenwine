@@ -1,14 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import Header from '@/components/Header';
 import CartDrawer from '@/components/CartDrawer';
 import SearchModal from '@/components/SearchModal';
 import QuickViewModal from '@/components/QuickViewModal';
 import CheckoutModal from '@/components/CheckoutModal';
 import { ProductType } from '@/lib/products-data';
+import { ArrowDown } from 'lucide-react';
 
 export default function HomePage() {
   const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(null);
@@ -16,7 +16,7 @@ export default function HomePage() {
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
   const [allProducts, setAllProducts] = useState<ProductType[]>([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetch('/api/products')
       .then(res => res.json())
       .then(data => setAllProducts(data))
@@ -28,57 +28,59 @@ export default function HomePage() {
       {/* Completely Transparent Floating Header overlaying Hero */}
       <Header onSearchClick={() => setIsSearchOpen(true)} />
 
-      {/* Pure Editorial Lookbook Hero - 2 SIDE-BY-SIDE ARTWORK PHOTOS */}
-      <section className="relative min-h-screen w-full grid grid-cols-1 md:grid-cols-2">
-        {/* Left Column - BLUE ARTWORK (ALL PRODUCTS) */}
-        <Link
-          href="/catalog"
-          className="group relative h-screen w-full overflow-hidden bg-neutral-950 cursor-pointer"
-        >
-          <Image
-            src="/hero-blue.jpg"
-            alt="ALL PRODUCTS - LENWINE BLUE"
-            fill
-            className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-70 group-hover:opacity-50 transition-opacity" />
+      {/* Pure Editorial Fullscreen Background Video Hero Section */}
+      <section className="relative h-screen w-full flex items-end justify-start overflow-hidden bg-black">
+        <div className="absolute inset-0 z-0">
+          {/* Background Video Player */}
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-cover filter contrast-[1.08]"
+          >
+            <source src="/hero.mp4" type="video/mp4" />
+            {/* Fallback image if video is loading or missing */}
+            <img
+              src="/hero-blue.jpg"
+              alt="LENWINE Campaign"
+              className="w-full h-full object-cover"
+            />
+          </video>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/20" />
+        </div>
 
-          {/* Collection Title Overlay on Photo */}
-          <div className="absolute bottom-10 left-10 sm:bottom-14 sm:left-14 z-10">
-            <span className="text-white font-extrabold text-lg sm:text-2xl tracking-[0.2em] uppercase group-hover:underline underline-offset-8 drop-shadow-lg">
-              ALL PRODUCTS
+        {/* Hero Overlay Content */}
+        <div className="relative z-10 max-w-[1700px] mx-auto w-full px-6 sm:px-12 pb-16 space-y-6 text-white">
+          <div className="space-y-3">
+            <span className="text-[10px] font-mono tracking-[0.4em] uppercase text-neutral-300 font-bold">
+              AUTUMN / WINTER 2026 ARCHIVE
             </span>
-            <span className="block text-[10px] text-neutral-300 font-mono tracking-[0.3em] uppercase mt-1">
-              DISCOVER FULL CATALOG
-            </span>
+            <h1 className="font-erd-logo text-4xl sm:text-7xl lg:text-8xl tracking-[0.2em] uppercase text-white leading-none">
+              LENWINE
+            </h1>
+            <p className="max-w-md text-xs sm:text-sm text-neutral-300 tracking-[0.2em] font-mono uppercase leading-relaxed">
+              ENFANTS RICHES DÉPRIMÉS ESTHÉTIQUE • DISTRESSED LEATHER • PUNK COUTURE
+            </p>
           </div>
-        </Link>
 
-        {/* Right Column - RED ARTWORK (SELECT COLLECTION) */}
-        <Link
-          href="/catalog?category=MEN"
-          className="group relative h-screen w-full overflow-hidden bg-neutral-950 cursor-pointer"
-        >
-          <Image
-            src="/hero-red.jpg"
-            alt="SELECT COLLECTION - LENWINE RED"
-            fill
-            className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-70 group-hover:opacity-50 transition-opacity" />
+          <div className="pt-4 flex flex-wrap items-center gap-6">
+            <Link
+              href="/catalog"
+              className="bg-white text-black px-8 py-4 text-xs font-extrabold tracking-[0.25em] uppercase hover:bg-neutral-200 transition-all flex items-center space-x-2 shadow-2xl"
+            >
+              <span>DISCOVER ALL PRODUCTS</span>
+              <ArrowDown className="w-4 h-4" />
+            </Link>
 
-          {/* Collection Title Overlay on Photo */}
-          <div className="absolute bottom-10 right-10 sm:bottom-14 sm:right-14 z-10 text-right">
-            <span className="text-white font-extrabold text-lg sm:text-2xl tracking-[0.2em] uppercase group-hover:underline underline-offset-8 drop-shadow-lg">
+            <Link
+              href="/catalog?category=MEN"
+              className="bg-black/60 backdrop-blur-md border border-white/30 text-white px-8 py-4 text-xs font-extrabold tracking-[0.25em] uppercase hover:bg-white hover:text-black transition-all"
+            >
               SELECT COLLECTION
-            </span>
-            <span className="block text-[10px] text-neutral-300 font-mono tracking-[0.3em] uppercase mt-1">
-              AUTUMN / WINTER 2026
-            </span>
+            </Link>
           </div>
-        </Link>
+        </div>
       </section>
 
       {/* Secondary Editorial Campaign Showcase Section */}
