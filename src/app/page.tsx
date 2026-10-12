@@ -52,6 +52,7 @@ export default function HomePage() {
             poster="/hero-blue.jpg"
             className="w-full h-full object-cover filter contrast-[1.08]"
           >
+            <source src="https://pub-cfcb590cd8cc49a8acccc56630e96549.r2.dev/videos/hero.mp4" type="video/mp4" />
             <source src="/hero.mp4" type="video/mp4" />
           </video>
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/20" />
