@@ -31,12 +31,12 @@ export default function Header({ onSearchClick }: HeaderProps) {
   return (
     <>
       {/* Fixed Sticky Header - Completely Transparent Floating over content */}
-      <header className={`fixed top-0 left-0 right-0 z-40 bg-transparent ${textColor} pt-6 sm:pt-8 pb-4 pointer-events-none`}>
-        <div className="max-w-[1750px] mx-auto px-6 sm:px-12 flex items-center justify-between pointer-events-auto">
+      <header className={`fixed top-0 left-0 right-0 z-40 bg-transparent ${textColor} pt-4 sm:pt-8 pb-3 sm:pb-4 pointer-events-none`}>
+        <div className="max-w-[1750px] mx-auto px-4 sm:px-12 flex items-center justify-between pointer-events-auto">
           {/* Left: Far-Left LENWINE Logo Image (White on homepage, Black on other pages) */}
           <div>
             <Link href="/" className="group flex items-center">
-              <div className="relative h-8 sm:h-10 w-44 sm:w-60 group-hover:opacity-75 transition-opacity">
+              <div className="relative h-7 sm:h-10 w-36 sm:w-60 group-hover:opacity-75 transition-opacity">
                 <Image
                   src={logoSrc}
                   alt="LENWINE"
@@ -49,14 +49,14 @@ export default function Header({ onSearchClick }: HeaderProps) {
           </div>
 
           {/* Right: Icons (Search, Cart, Burger Menu) */}
-          <div className={`flex items-center space-x-6 sm:space-x-8 ${textColor}`}>
+          <div className={`flex items-center space-x-3.5 sm:space-x-8 ${textColor}`}>
             {/* Search Icon */}
             <button
               onClick={onSearchClick}
               aria-label="Search"
               className="p-1 hover:opacity-70 transition-opacity"
             >
-              <Search className="w-6 h-6 stroke-[1.8]" />
+              <Search className="w-5 h-5 sm:w-6 sm:h-6 stroke-[1.8]" />
             </button>
 
             {/* Shopping Cart Icon */}
@@ -65,9 +65,9 @@ export default function Header({ onSearchClick }: HeaderProps) {
               aria-label="Cart"
               className="relative p-1 hover:opacity-70 transition-opacity flex items-center space-x-1"
             >
-              <ShoppingBag className="w-6 h-6 stroke-[1.8]" />
+              <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6 stroke-[1.8]" />
               {totalCount > 0 && (
-                <span className="font-mono text-xs font-bold">({totalCount})</span>
+                <span className="font-mono text-[11px] sm:text-xs font-bold">({totalCount})</span>
               )}
             </button>
 
@@ -77,7 +77,7 @@ export default function Header({ onSearchClick }: HeaderProps) {
               aria-label="Open Menu"
               className="p-1 hover:opacity-70 transition-opacity flex items-center justify-center"
             >
-              <Menu className="w-7 h-7 sm:w-8 sm:h-8 stroke-[1.8]" />
+              <Menu className="w-6 h-6 sm:w-8 sm:h-8 stroke-[1.8]" />
             </button>
           </div>
         </div>
@@ -88,23 +88,23 @@ export default function Header({ onSearchClick }: HeaderProps) {
         <div className="fixed inset-0 z-50 flex justify-end">
           {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity"
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
             onClick={() => setIsMenuOpen(false)}
           />
 
           {/* Menu Drawer Content */}
-          <div className="relative w-full max-w-sm bg-white text-black h-full p-8 sm:p-12 flex flex-col justify-between z-10 animate-fade-in shadow-2xl">
+          <div className="relative w-full max-w-[320px] sm:max-w-sm bg-white text-black h-full p-6 sm:p-12 flex flex-col justify-between z-10 animate-fade-in shadow-2xl">
             <div>
               {/* Drawer Top Header */}
-              <div className="flex items-center justify-between pb-8 border-b border-neutral-200">
-                <div className="relative h-7 w-36">
+              <div className="flex items-center justify-between pb-6 sm:pb-8 border-b border-neutral-200">
+                <div className="relative h-6 sm:h-7 w-32 sm:w-36">
                   <Image src="/logo-black.png" alt="LENWINE" fill className="object-contain object-left" />
                 </div>
                 <button
                   onClick={() => setIsMenuOpen(false)}
-                  className="p-2 text-neutral-400 hover:text-black transition-colors"
+                  className="p-1.5 text-neutral-400 hover:text-black transition-colors"
                 >
-                  <X className="w-7 h-7 stroke-[1.8]" />
+                  <X className="w-6 h-6 stroke-[1.8]" />
                 </button>
               </div>
 

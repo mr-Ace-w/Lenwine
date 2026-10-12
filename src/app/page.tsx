@@ -58,31 +58,31 @@ export default function HomePage() {
         </div>
 
         {/* Hero Overlay Content */}
-        <div className="relative z-10 max-w-[1700px] mx-auto w-full px-6 sm:px-12 pb-16 space-y-6 text-white">
-          <div className="space-y-3">
-            <span className="text-[10px] font-mono tracking-[0.4em] uppercase text-neutral-300 font-bold">
+        <div className="relative z-10 max-w-[1700px] mx-auto w-full px-5 sm:px-12 pb-10 sm:pb-16 space-y-4 sm:space-y-6 text-white">
+          <div className="space-y-2 sm:space-y-3">
+            <span className="text-[9px] sm:text-[10px] font-mono tracking-[0.35em] sm:tracking-[0.4em] uppercase text-neutral-300 font-bold">
               AUTUMN / WINTER 2026 ARCHIVE
             </span>
-            <h1 className="font-erd-logo text-4xl sm:text-7xl lg:text-8xl tracking-[0.2em] uppercase text-white leading-none">
+            <h1 className="font-erd-logo text-5xl sm:text-7xl lg:text-8xl tracking-[0.18em] sm:tracking-[0.2em] uppercase text-white leading-none">
               LENWINE
             </h1>
-            <p className="max-w-md text-xs sm:text-sm text-neutral-300 tracking-[0.2em] font-mono uppercase leading-relaxed">
+            <p className="max-w-md text-[11px] sm:text-sm text-neutral-300 tracking-[0.18em] sm:tracking-[0.2em] font-mono uppercase leading-relaxed">
               ENFANTS RICHES DÉPRIMÉS ESTHÉTIQUE • DISTRESSED LEATHER • PUNK COUTURE
             </p>
           </div>
 
-          <div className="pt-4 flex flex-wrap items-center gap-6">
+          <div className="pt-2 sm:pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-6 w-full sm:w-auto">
             <Link
               href="/catalog"
-              className="bg-white text-black px-8 py-4 text-xs font-extrabold tracking-[0.25em] uppercase hover:bg-neutral-200 transition-all flex items-center space-x-2 shadow-2xl"
+              className="bg-white text-black px-6 sm:px-8 py-3.5 sm:py-4 text-xs font-extrabold tracking-[0.2em] sm:tracking-[0.25em] uppercase hover:bg-neutral-200 transition-all flex items-center justify-center space-x-2 shadow-2xl text-center"
             >
               <span>DISCOVER ALL PRODUCTS</span>
-              <ArrowDown className="w-4 h-4" />
+              <ArrowDown className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </Link>
 
             <Link
               href="/catalog?category=MEN"
-              className="bg-black/60 backdrop-blur-md border border-white/30 text-white px-8 py-4 text-xs font-extrabold tracking-[0.25em] uppercase hover:bg-white hover:text-black transition-all"
+              className="bg-black/60 backdrop-blur-md border border-white/30 text-white px-6 sm:px-8 py-3.5 sm:py-4 text-xs font-extrabold tracking-[0.2em] sm:tracking-[0.25em] uppercase hover:bg-white hover:text-black transition-all text-center"
             >
               SELECT COLLECTION
             </Link>

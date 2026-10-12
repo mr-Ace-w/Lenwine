@@ -78,11 +78,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   }
 
   return (
-    <main className="min-h-screen bg-white text-black flex flex-col selection:bg-black selection:text-white pt-24">
+    <main className="min-h-screen bg-white text-black flex flex-col selection:bg-black selection:text-white pt-20 sm:pt-24">
       <Header onSearchClick={() => setIsSearchOpen(true)} />
 
       {/* Back Button */}
-      <div className="max-w-[1700px] mx-auto w-full px-6 sm:px-10 pt-6">
+      <div className="max-w-[1700px] mx-auto w-full px-4 sm:px-10 pt-4 sm:pt-6">
         <Link
           href="/catalog"
           className="inline-flex items-center space-x-2 text-xs font-bold tracking-[0.2em] uppercase text-neutral-500 hover:text-black transition-colors"
@@ -93,7 +93,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
       </div>
 
       {/* Main Product Layout */}
-      <section className="max-w-[1700px] mx-auto w-full px-6 sm:px-10 py-10 flex-1 grid grid-cols-1 lg:grid-cols-2 gap-12 sm:gap-16">
+      <section className="max-w-[1700px] mx-auto w-full px-4 sm:px-10 py-6 sm:py-10 flex-1 grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-16">
         {/* Left: Gallery Column */}
         <div className="flex flex-col space-y-4">
           <div className="relative aspect-[3/4] w-full bg-neutral-100 border border-neutral-200 shadow-xs">
@@ -108,12 +108,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
           {/* Thumbnails */}
           {product.images.length > 1 && (
-            <div className="flex space-x-3 overflow-x-auto pt-2">
+            <div className="flex space-x-2.5 sm:space-x-3 overflow-x-auto pt-2">
               {product.images.map((img, idx) => (
                 <button
                   key={idx}
                   onClick={() => setActiveImageIndex(idx)}
-                  className={`relative w-20 h-24 flex-shrink-0 border-2 transition-all ${
+                  className={`relative w-16 h-20 sm:w-20 sm:h-24 flex-shrink-0 border-2 transition-all ${
                     activeImageIndex === idx ? 'border-black opacity-100' : 'border-neutral-200 opacity-60 hover:opacity-100'
                   }`}
                 >
@@ -125,17 +125,17 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         </div>
 
         {/* Right: Info & Actions Column */}
-        <div className="flex flex-col justify-between space-y-8">
-          <div className="space-y-6">
+        <div className="flex flex-col justify-between space-y-6 sm:space-y-8">
+          <div className="space-y-4 sm:space-y-6">
             <span className="text-[10px] font-mono tracking-[0.3em] font-extrabold text-neutral-400 uppercase">
               COLLECTION • {product.category}
             </span>
 
-            <h1 className="font-erd-heading text-3xl sm:text-4xl uppercase tracking-[0.1em] text-black leading-tight">
+            <h1 className="font-erd-heading text-2xl sm:text-3xl lg:text-4xl uppercase tracking-[0.08em] sm:tracking-[0.1em] text-black leading-tight">
               {product.name}
             </h1>
 
-            <div className="flex items-center space-x-4 text-2xl font-bold font-mono">
+            <div className="flex items-center space-x-4 text-xl sm:text-2xl font-bold font-mono">
               <span>{product.price.toLocaleString('uk-UA')} ₴</span>
               {product.originalPrice && (
                 <span className="text-sm text-neutral-400 line-through">
@@ -144,7 +144,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               )}
             </div>
 
-            <p className="text-xs text-neutral-700 leading-relaxed font-sans border-t border-b border-neutral-200 py-6">
+            <p className="text-xs text-neutral-700 leading-relaxed font-sans border-t border-b border-neutral-200 py-4 sm:py-6">
               {product.description}
             </p>
 
@@ -153,12 +153,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               <label className="block text-[11px] font-bold tracking-[0.2em] uppercase text-black">
                 SELECT SIZE:
               </label>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-2.5 sm:gap-3">
                 {product.sizes.map(size => (
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
-                    className={`px-5 py-2.5 text-xs font-bold uppercase border transition-all ${
+                    className={`px-4 sm:px-5 py-2 sm:py-2.5 text-xs font-bold uppercase border transition-all ${
                       selectedSize === size
                         ? 'bg-black text-white border-black shadow-sm'
                         : 'bg-white text-black border-neutral-300 hover:border-black'
@@ -172,10 +172,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
           </div>
 
           {/* Call to Action Buttons */}
-          <div className="space-y-4 pt-6 border-t border-neutral-200">
+          <div className="space-y-3.5 sm:space-y-4 pt-4 sm:pt-6 border-t border-neutral-200">
             <button
               onClick={handleAdd}
-              className="w-full bg-black text-white py-4 text-xs font-extrabold tracking-[0.25em] uppercase flex items-center justify-center space-x-2 hover:bg-neutral-800 transition-colors shadow-lg"
+              className="w-full bg-black text-white py-3.5 sm:py-4 text-xs font-extrabold tracking-[0.2em] sm:tracking-[0.25em] uppercase flex items-center justify-center space-x-2 hover:bg-neutral-800 transition-colors shadow-lg"
             >
               {addedSuccess ? (
                 <>
@@ -192,12 +192,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
             <button
               onClick={handleFastCheckout}
-              className="w-full bg-neutral-100 border border-neutral-300 text-black py-4 text-xs font-extrabold tracking-[0.25em] uppercase hover:bg-black hover:text-white hover:border-black transition-all"
+              className="w-full bg-neutral-100 border border-neutral-300 text-black py-3.5 sm:py-4 text-xs font-extrabold tracking-[0.2em] sm:tracking-[0.25em] uppercase hover:bg-black hover:text-white hover:border-black transition-all"
             >
               FAST CHECKOUT NOW
             </button>
 
-            <div className="flex items-center justify-center space-x-6 text-[10px] text-neutral-500 font-bold uppercase tracking-[0.2em] pt-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-6 text-[10px] text-neutral-500 font-bold uppercase tracking-[0.2em] pt-3 sm:pt-4">
               <div className="flex items-center space-x-1.5">
                 <Truck className="w-3.5 h-3.5 text-black" />
                 <span>SHIPPING VIA NOVA POSHTA</span>
@@ -212,7 +212,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
       </section>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-neutral-200 py-10 px-6 sm:px-10 mt-16">
+      <footer className="bg-white border-t border-neutral-200 py-8 sm:py-10 px-4 sm:px-10 mt-12 sm:mt-16">
         <div className="max-w-[1700px] mx-auto flex flex-col sm:flex-row items-center justify-between text-xs font-bold tracking-[0.18em] uppercase text-neutral-500 gap-6">
           <div className="flex items-center space-x-4">
             <div className="relative h-5 w-28">

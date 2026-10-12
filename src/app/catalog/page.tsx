@@ -51,18 +51,18 @@ function CatalogContent() {
   };
 
   return (
-    <main className="min-h-screen bg-white text-black flex flex-col selection:bg-black selection:text-white pt-24">
+    <main className="min-h-screen bg-white text-black flex flex-col selection:bg-black selection:text-white pt-20 sm:pt-24">
       <Header onSearchClick={() => setIsSearchOpen(true)} />
 
       {/* ERD Collection Section Header (Screenshot Exact Layout) */}
-      <section className="max-w-[1700px] mx-auto w-full px-6 sm:px-10 pt-10 pb-12 flex items-center justify-between">
-        <h1 className="font-extrabold text-2xl sm:text-4xl tracking-[0.1em] text-black uppercase">
+      <section className="max-w-[1700px] mx-auto w-full px-4 sm:px-10 pt-6 sm:pt-10 pb-6 sm:pb-12 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <h1 className="font-extrabold text-xl sm:text-3xl lg:text-4xl tracking-[0.08em] sm:tracking-[0.1em] text-black uppercase">
           {getCategoryTitle()}
         </h1>
 
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className="bg-black text-white px-6 py-3 text-xs font-bold tracking-[0.2em] uppercase hover:bg-neutral-800 transition-colors flex items-center space-x-2 shadow-xs"
+          className="self-start sm:self-auto bg-black text-white px-5 sm:px-6 py-2.5 sm:py-3 text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase hover:bg-neutral-800 transition-colors flex items-center space-x-2 shadow-xs"
         >
           <SlidersHorizontal className="w-3.5 h-3.5" />
           <span>FILTERS</span>
@@ -71,7 +71,7 @@ function CatalogContent() {
 
       {/* Filter Options Bar */}
       {showFilters && (
-        <div className="max-w-[1700px] mx-auto w-full px-6 sm:px-10 pb-8 flex flex-wrap gap-4 border-b border-neutral-200 animate-fade-in text-xs font-bold tracking-[0.15em]">
+        <div className="max-w-[1700px] mx-auto w-full px-4 sm:px-10 pb-6 sm:pb-8 flex flex-wrap gap-2.5 sm:gap-4 border-b border-neutral-200 animate-fade-in text-[11px] sm:text-xs font-bold tracking-[0.15em]">
           {[
             { label: 'ALL PRODUCTS', val: 'ALL' },
             { label: 'HOMME (MEN)', val: 'MEN' },
@@ -81,7 +81,7 @@ function CatalogContent() {
             <button
               key={cat.val}
               onClick={() => setActiveCategory(cat.val)}
-              className={`px-4 py-2 border transition-colors ${
+              className={`px-3.5 sm:px-4 py-2 border transition-colors ${
                 activeCategory === cat.val
                   ? 'bg-black text-white border-black'
                   : 'bg-white text-black border-neutral-300 hover:border-black'
@@ -94,9 +94,9 @@ function CatalogContent() {
       )}
 
       {/* ERD Product Grid */}
-      <section className="max-w-[1700px] mx-auto w-full px-6 sm:px-10 pb-24 flex-1">
+      <section className="max-w-[1700px] mx-auto w-full px-4 sm:px-10 pb-16 sm:pb-24 flex-1">
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-12">
             {[1, 2, 3, 4, 5, 6].map(n => (
               <div key={n} className="animate-pulse space-y-4">
                 <div className="bg-neutral-100 aspect-[3/4] w-full" />
@@ -110,7 +110,7 @@ function CatalogContent() {
             NO POSITIONS IN THIS COLLECTION
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-16">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 sm:gap-x-10 gap-y-10 sm:gap-y-16">
             {filteredProducts.map(product => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -119,7 +119,7 @@ function CatalogContent() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-neutral-200 py-10 px-6 sm:px-10">
+      <footer className="bg-white border-t border-neutral-200 py-8 sm:py-10 px-4 sm:px-10">
         <div className="max-w-[1700px] mx-auto flex flex-col sm:flex-row items-center justify-between text-xs font-bold tracking-[0.18em] uppercase text-neutral-500 gap-6">
           <div className="flex items-center space-x-4">
             <div className="relative h-5 w-28">

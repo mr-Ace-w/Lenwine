@@ -315,52 +315,54 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-white text-black font-sans selection:bg-black selection:text-white">
       {/* Top Header Bar */}
-      <header className="border-b border-neutral-200 bg-white/90 backdrop-blur-md px-6 py-4 sticky top-0 z-30 flex items-center justify-between shadow-xs">
-        <div className="flex items-center space-x-6">
+      <header className="border-b border-neutral-200 bg-white/90 backdrop-blur-md px-4 sm:px-6 py-3 sm:py-4 sticky top-0 z-30 flex items-center justify-between shadow-xs">
+        <div className="flex items-center space-x-3 sm:space-x-6">
           <Link
             href="/"
-            className="flex items-center space-x-2 text-xs font-bold uppercase tracking-[0.2em] text-neutral-600 hover:text-black transition-colors"
+            className="flex items-center space-x-1.5 text-xs font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-neutral-600 hover:text-black transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>ПОВЕРНУТИСЯ ДО МАГАЗИНУ</span>
+            <span className="hidden sm:inline">МАГАЗИН</span>
           </Link>
           <div className="h-4 w-px bg-neutral-200" />
-          <div className="flex items-center space-x-3">
-            <div className="relative h-6 w-32">
+          <div className="flex items-center space-x-2 sm:space-x-3">
+            <div className="relative h-5 sm:h-6 w-24 sm:w-32">
               <Image src="/logo-black.png" alt="LENWINE" fill className="object-contain object-left" />
             </div>
-            <span className="text-xs font-bold tracking-[0.2em] uppercase text-amber-700 font-mono">
-              [ADMINISTRATION]
+            <span className="text-[10px] sm:text-xs font-bold tracking-[0.15em] sm:tracking-[0.2em] uppercase text-amber-700 font-mono">
+              [ADMIN]
             </span>
           </div>
         </div>
 
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2 sm:space-x-3">
           <button
             onClick={fetchData}
-            className="p-2 bg-neutral-100 hover:bg-neutral-200 text-black border border-neutral-300 transition-colors flex items-center space-x-2 text-xs font-bold uppercase tracking-wider"
+            aria-label="Оновити дані"
+            className="p-2 sm:px-3 sm:py-2 bg-neutral-100 hover:bg-neutral-200 text-black border border-neutral-300 transition-colors flex items-center space-x-1.5 text-xs font-bold uppercase tracking-wider"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-            <span className="hidden sm:inline">ОНОВИТИ ДАНІ</span>
+            <span className="hidden md:inline">ОНОВИТИ</span>
           </button>
 
           <button
             onClick={handleLogout}
-            className="p-2 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 transition-colors flex items-center space-x-2 text-xs font-bold uppercase tracking-wider"
+            aria-label="Вихід"
+            className="p-2 sm:px-3 sm:py-2 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 transition-colors flex items-center space-x-1.5 text-xs font-bold uppercase tracking-wider"
           >
             <LogOut className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">ВИХІД</span>
+            <span className="hidden md:inline">ВИХІД</span>
           </button>
         </div>
       </header>
 
       {/* Main Container */}
-      <div className="max-w-7xl mx-auto px-6 lg:px-10 py-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-6 sm:py-10">
         {/* Navigation Tabs */}
-        <div className="flex space-x-4 border-b border-neutral-200 mb-8 pb-px">
+        <div className="flex space-x-2 sm:space-x-4 border-b border-neutral-200 mb-6 sm:mb-8 pb-px overflow-x-auto whitespace-nowrap">
           <button
             onClick={() => setActiveTab('dashboard')}
-            className={`px-6 py-3 text-xs font-bold tracking-[0.2em] uppercase transition-all border-b-2 ${
+            className={`px-4 sm:px-6 py-2.5 sm:py-3 text-[11px] sm:text-xs font-bold tracking-[0.15em] sm:tracking-[0.2em] uppercase transition-all border-b-2 flex-shrink-0 ${
               activeTab === 'dashboard'
                 ? 'border-black text-black font-extrabold bg-neutral-50'
                 : 'border-transparent text-neutral-400 hover:text-black'
@@ -370,7 +372,7 @@ export default function AdminPage() {
           </button>
           <button
             onClick={() => setActiveTab('products')}
-            className={`px-6 py-3 text-xs font-bold tracking-[0.2em] uppercase transition-all border-b-2 ${
+            className={`px-4 sm:px-6 py-2.5 sm:py-3 text-[11px] sm:text-xs font-bold tracking-[0.15em] sm:tracking-[0.2em] uppercase transition-all border-b-2 flex-shrink-0 ${
               activeTab === 'products'
                 ? 'border-black text-black font-extrabold bg-neutral-50'
                 : 'border-transparent text-neutral-400 hover:text-black'
@@ -380,7 +382,7 @@ export default function AdminPage() {
           </button>
           <button
             onClick={() => setActiveTab('orders')}
-            className={`px-6 py-3 text-xs font-bold tracking-[0.2em] uppercase transition-all border-b-2 ${
+            className={`px-4 sm:px-6 py-2.5 sm:py-3 text-[11px] sm:text-xs font-bold tracking-[0.15em] sm:tracking-[0.2em] uppercase transition-all border-b-2 flex-shrink-0 ${
               activeTab === 'orders'
                 ? 'border-black text-black font-extrabold bg-neutral-50'
                 : 'border-transparent text-neutral-400 hover:text-black'
@@ -486,11 +488,11 @@ export default function AdminPage() {
         {/* TAB 2: PRODUCTS */}
         {activeTab === 'products' && (
           <div className="space-y-6 animate-fade-in">
-            <div className="flex items-center justify-between">
-              <h3 className="font-extrabold text-base tracking-[0.2em] uppercase">УПРАВЛІННЯ КАТАЛОГОМ</h3>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+              <h3 className="font-extrabold text-sm sm:text-base tracking-[0.2em] uppercase">УПРАВЛІННЯ КАТАЛОГОМ</h3>
               <button
                 onClick={() => setIsAddProductOpen(true)}
-                className="bg-black text-white px-5 py-3 text-xs font-bold tracking-[0.2em] uppercase flex items-center space-x-2 hover:bg-neutral-800 transition-colors shadow-md"
+                className="bg-black text-white px-5 py-3 text-xs font-bold tracking-[0.2em] uppercase flex items-center justify-center space-x-2 hover:bg-neutral-800 transition-colors shadow-md text-center"
               >
                 <Plus className="w-4 h-4" />
                 <span>ДОДАТИ НОВИЙ ТОВАР</span>
@@ -499,7 +501,7 @@ export default function AdminPage() {
 
             {/* Products Table */}
             <div className="bg-white border border-neutral-200 overflow-x-auto shadow-xs">
-              <table className="w-full text-left text-xs">
+              <table className="w-full text-left text-xs min-w-[620px]">
                 <thead className="border-b border-neutral-200 text-neutral-500 uppercase tracking-[0.2em] text-[10px] font-bold bg-neutral-50">
                   <tr>
                     <th className="py-3 px-4">ФОТО (КІЛЬКІСТЬ)</th>
@@ -616,14 +618,14 @@ export default function AdminPage() {
 
       {/* Add Product Modal */}
       {isAddProductOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="fixed inset-0 bg-black/40 backdrop-blur-xs" onClick={() => setIsAddProductOpen(false)} />
-          <div className="relative w-full max-w-lg bg-white border border-neutral-300 p-6 sm:p-8 shadow-2xl z-10 animate-fade-in text-black max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-neutral-200 pb-4 mb-6">
-              <h3 className="font-bold text-base tracking-[0.2em] uppercase text-black">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-xs" onClick={() => setIsAddProductOpen(false)} />
+          <div className="relative w-full max-w-lg bg-white border border-neutral-300 p-4 sm:p-8 shadow-2xl z-10 animate-fade-in text-black max-h-[92vh] overflow-y-auto">
+            <div className="flex items-center justify-between border-b border-neutral-200 pb-3 sm:pb-4 mb-4 sm:mb-6">
+              <h3 className="font-bold text-sm sm:text-base tracking-[0.2em] uppercase text-black">
                 ДОДАТИ НОВИЙ ТОВАР
               </h3>
-              <button onClick={() => setIsAddProductOpen(false)}>
+              <button onClick={() => setIsAddProductOpen(false)} aria-label="Закрити">
                 <X className="w-5 h-5 text-neutral-400 hover:text-black" />
               </button>
             </div>
@@ -643,7 +645,7 @@ export default function AdminPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-[10px] uppercase text-neutral-500 font-bold mb-1">
                     ЦІНА (₴) *
@@ -748,18 +750,18 @@ export default function AdminPage() {
                 />
               </div>
 
-              <div className="flex items-center space-x-4 pt-2">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-4 pt-2">
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="flex-1 bg-black text-white py-3.5 text-xs font-bold uppercase tracking-[0.2em] hover:bg-neutral-800 transition-colors shadow-md disabled:opacity-50"
+                  className="flex-1 bg-black text-white py-3.5 text-xs font-bold uppercase tracking-[0.2em] hover:bg-neutral-800 transition-colors shadow-md disabled:opacity-50 text-center"
                 >
                   {isSaving ? 'ЗБЕРЕЖЕННЯ...' : 'ЗБЕРЕГТИ ТОВАР'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsAddProductOpen(false)}
-                  className="px-6 py-3.5 bg-neutral-100 text-neutral-600 text-xs font-bold uppercase tracking-widest hover:text-black"
+                  className="px-6 py-3.5 bg-neutral-100 text-neutral-600 text-xs font-bold uppercase tracking-widest hover:text-black text-center"
                 >
                   СКАСУВАТИ
                 </button>
