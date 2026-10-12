@@ -1,5 +1,6 @@
 [
   {
+    "id": "len-96059",
     "name": "erd hoddie",
     "price": 2900,
     "category": "MEN",
@@ -15,7 +16,6 @@
       "XL"
     ],
     "inStock": true,
-    "isFeatured": true,
-    "id": "len-96059"
+    "isFeatured": true
   }
 ]

@@ -32,6 +32,7 @@ export default function AdminPage() {
   const [orders, setOrders] = useState<OrderType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   // New product modal form state
   const [isAddProductOpen, setIsAddProductOpen] = useState(false);
@@ -166,6 +167,7 @@ export default function AdminPage() {
 
   const handleCreateProduct = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSaving(true);
     try {
       const parsedImagesList = newProduct.imagesText
         .split(/[\n,]+/)
@@ -191,15 +193,21 @@ export default function AdminPage() {
           originalPrice: '',
           category: 'MEN',
           description: '',
-          imagesText: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&q=80&w=1000\nhttps://images.unsplash.com/photo-1520975954732-35dd22299614?auto=format&fit=crop&q=80&w=1000',
+          imagesText: '',
           sizes: 'S, M, L, XL',
           inStock: true,
           isFeatured: true
         });
-        fetchData();
+        await fetchData();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        alert('Помилка при створенні товару: ' + (err.error || 'Спробуйте ще раз'));
       }
     } catch (err) {
       console.error(err);
+      alert('Помилка сервера при створенні товару');
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -743,9 +751,10 @@ export default function AdminPage() {
               <div className="flex items-center space-x-4 pt-2">
                 <button
                   type="submit"
-                  className="flex-1 bg-black text-white py-3.5 text-xs font-bold uppercase tracking-[0.2em] hover:bg-neutral-800 transition-colors shadow-md"
+                  disabled={isSaving}
+                  className="flex-1 bg-black text-white py-3.5 text-xs font-bold uppercase tracking-[0.2em] hover:bg-neutral-800 transition-colors shadow-md disabled:opacity-50"
                 >
-                  ЗБЕРЕГТИ ТОВАР
+                  {isSaving ? 'ЗБЕРЕЖЕННЯ...' : 'ЗБЕРЕГТИ ТОВАР'}
                 </button>
                 <button
                   type="button"

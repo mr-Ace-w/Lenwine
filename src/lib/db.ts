@@ -10,7 +10,10 @@ function readLocalProducts(): ProductType[] {
   try {
     if (fs.existsSync(productsFilePath)) {
       const data = fs.readFileSync(productsFilePath, 'utf-8');
-      return JSON.parse(data);
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
     }
   } catch (err) {
     console.error('Error reading local products.json:', err);
@@ -58,7 +61,7 @@ export const getProducts = async (): Promise<ProductType[]> => {
   if (supabase) {
     try {
       const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
-      if (!error && data) {
+      if (!error && data && data.length > 0) {
         const formatted: ProductType[] = data.map(item => ({
           id: item.id,
           name: item.name,
@@ -102,7 +105,7 @@ export const createProduct = async (productData: Omit<ProductType, 'id'>): Promi
           price: productData.price,
           original_price: productData.originalPrice || null,
           category: productData.category,
-          description: productData.description,
+          description: productData.description || '',
           images: productData.images,
           sizes: productData.sizes,
           in_stock: productData.inStock,
@@ -110,10 +113,10 @@ export const createProduct = async (productData: Omit<ProductType, 'id'>): Promi
         }
       ]).select().single();
 
-      if (!error && data) {
+      if (error) {
+        console.error('Supabase product insert error:', error.message);
+      } else if (data) {
         console.log('Product created in Supabase DB:', data.id);
-      } else {
-        console.warn('Supabase insert warning (falling back to disk JSON):', error?.message);
       }
     } catch (err) {
       console.error('Supabase product create error:', err);
@@ -179,7 +182,7 @@ export const getOrders = async (): Promise<OrderType[]> => {
   if (supabase) {
     try {
       const { data, error } = await supabase.from('orders').select('*').order('created_at', { ascending: false });
-      if (!error && data) {
+      if (!error && data && data.length > 0) {
         const formatted: OrderType[] = data.map(ord => ({
           id: ord.id,
           customerName: ord.customer_name,
