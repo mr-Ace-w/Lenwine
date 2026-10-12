@@ -49,10 +49,9 @@ export default function HomePage() {
             muted
             playsInline
             preload="auto"
-            poster="/hero-blue.jpg"
             className="w-full h-full object-cover filter contrast-[1.08]"
           >
-            <source src="https://pub-cfcb590cd8cc49a8acccc56630e96549.r2.dev/videos/hero.mp4" type="video/mp4" />
+            <source src="https://pub-cfcb590cd8cc49a8acccc56630e96549.r2.dev/videos/hero.mp4?v=2" type="video/mp4" />
             <source src="/hero.mp4" type="video/mp4" />
           </video>
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/20" />
@@ -91,38 +90,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Secondary Editorial Campaign Showcase Section */}
-      <section className="bg-neutral-950 text-white py-28 px-6 sm:px-12 border-t border-neutral-900">
-        <div className="max-w-[1700px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-          <div className="space-y-6">
-            <span className="text-[10px] font-mono tracking-[0.35em] text-neutral-500 uppercase">
-              ENFANTS RICHES DÉPRIMÉS ESTHÉTIQUE
-            </span>
-            <h2 className="font-erd-logo text-3xl sm:text-5xl tracking-[0.2em] uppercase text-white leading-tight">
-              LENWINE ARCHIVE
-            </h2>
-            <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed tracking-wider font-sans">
-              HIGH FASHION PUNK COUTURE. EXCLUSIVE CUTS & VINTAGE DISTRESSED APPAREL CREATED WITH PARISIAN SILKS AND ITALIAN VIRGIN WOOL.
-            </p>
-            <div className="pt-4">
-              <Link
-                href="/catalog"
-                className="inline-block bg-white text-black px-8 py-4 text-xs font-bold tracking-[0.25em] uppercase hover:bg-neutral-200 transition-colors shadow-xl"
-              >
-                ENTER CATALOG
-              </Link>
-            </div>
-          </div>
-
-          <div className="relative aspect-[4/3] w-full bg-neutral-900 overflow-hidden border border-white/10">
-            <img
-              src="https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&q=80&w=1200"
-              alt="Editorial ERD Campaign"
-              className="w-full h-full object-cover filter contrast-[1.1]"
-            />
-          </div>
-        </div>
-      </section>
 
       {/* Minimal Editorial Footer */}
       <footer className="bg-white border-t border-neutral-200 py-12 px-6 sm:px-10">
