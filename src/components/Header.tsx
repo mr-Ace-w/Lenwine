@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Menu, X, Search, ShoppingBag, ChevronLeft } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
-import { CLOTHING_TYPES, DEFAULT_BRANDS } from '@/lib/products-data';
+import { CLOTHING_TYPES } from '@/lib/products-data';
 
 interface HeaderProps {
   onSearchClick?: () => void;
@@ -20,7 +20,7 @@ export default function Header({ onSearchClick }: HeaderProps) {
     scope: 'ALL' | 'PREORDER' | 'IN_STOCK';
   }>({ title: 'ВСІ ТОВАРИ', scope: 'ALL' });
   const [brandSearch, setBrandSearch] = useState('');
-  const [allBrands, setAllBrands] = useState<string[]>(DEFAULT_BRANDS);
+  const [allBrands, setAllBrands] = useState<string[]>([]);
 
   const pathname = usePathname();
   const { totalCount, setIsCartOpen } = useCart();
@@ -30,14 +30,26 @@ export default function Header({ onSearchClick }: HeaderProps) {
   const logoSrc = isHomePage ? '/logo-white.png' : '/logo-black.png';
   const textColor = isHomePage ? 'text-white' : 'text-black';
 
-  // Handle drawer open / scroll lock / dynamic brands fetch
+  // Fetch only active brands present on the site
+  useEffect(() => {
+    fetch('/api/brands')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setAllBrands(data);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  // Handle drawer open / scroll lock / dynamic brands refresh
   useEffect(() => {
     if (isMenuOpen) {
       document.body.style.overflow = 'hidden';
       fetch('/api/brands')
         .then(res => res.json())
         .then(data => {
-          if (Array.isArray(data) && data.length > 0) {
+          if (Array.isArray(data)) {
             setAllBrands(data);
           }
         })
@@ -303,7 +315,9 @@ export default function Header({ onSearchClick }: HeaderProps) {
                     ))
                   ) : (
                     <div className="py-8 text-center text-xs font-mono text-neutral-400 uppercase">
-                      Бренд &quot;{brandSearch}&quot; не знайдено
+                      {brandSearch
+                        ? `Бренд "${brandSearch}" не знайдено`
+                        : 'На сайті ще немає доданих брендів'}
                     </div>
                   )}
                 </div>

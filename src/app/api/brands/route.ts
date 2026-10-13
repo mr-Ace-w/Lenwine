@@ -1,26 +1,36 @@
 import { NextResponse } from 'next/server';
 import { getProducts } from '@/lib/db';
-import { DEFAULT_BRANDS } from '@/lib/products-data';
 
 export async function GET() {
   try {
     const products = await getProducts();
-    const productBrands = products
-      .map(p => p.brand?.trim())
-      .filter((b): b is string => Boolean(b));
+    const productBrands: string[] = [];
 
-    const allBrandsSet = new Set<string>([
-      ...DEFAULT_BRANDS,
-      ...productBrands
-    ]);
+    for (const p of products) {
+      if (p.brand?.trim()) {
+        productBrands.push(p.brand.trim());
+      } else if (p.name) {
+        // Fallback: detect brand in name if not explicitly set
+        const nameUpper = p.name.toUpperCase();
+        if (nameUpper.includes('BALENCIAGA')) {
+          productBrands.push('BALENCIAGA');
+        } else if (nameUpper.includes('ERD') || nameUpper.includes('ENFANTS')) {
+          productBrands.push('ENFANTS RICHES DÉPRIMÉS');
+        } else if (nameUpper.includes('SAINT LAURENT')) {
+          productBrands.push('SAINT LAURENT');
+        }
+      }
+    }
+
+    // Only unique brands that currently exist on the site
+    const allBrandsSet = new Set<string>(productBrands);
 
     const sortedBrands = Array.from(allBrandsSet).sort((a, b) => {
-      // Numbers first, then alphabetical (like 032C, 14TH ADDICTION, 20471120...)
       return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
     });
 
     return NextResponse.json(sortedBrands);
   } catch (error) {
-    return NextResponse.json(DEFAULT_BRANDS);
+    return NextResponse.json([]);
   }
 }
