@@ -1,5 +1,106 @@
 [
   {
+    "id": "len-56280",
+    "name": " ERD Jeans",
+    "price": 4500,
+    "category": "MEN",
+    "description": "",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1787606844033_photo_3_2026-08-24_22-49-00.webp?alt=media&token=2ac3ab00-6352-4bd7-af28-8e7261e74de6",
+      "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1787606844013_photo_8_2026-08-24_23-23-00.webp?alt=media&token=e69584be-714e-442c-9537-74191dab97c7",
+      "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1787606844033_photo_7_2026-08-24_23-23-00.webp?alt=media&token=16c2c30e-99c5-426b-a4b3-517e416b8800"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "inStock": true,
+    "isFeatured": true
+  },
+  {
+    "id": "len-51532",
+    "name": "Balenciaga Strike Boots",
+    "price": 6000,
+    "category": "MEN",
+    "description": "",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1787261455722_photo_3_2026-08-20_23-24-28.webp?alt=media&token=2fa09e86-afe8-4be1-83ab-cf31dfcfc11a",
+      "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1787261455741_photo_6_2026-08-20_23-25-00.webp?alt=media&token=ec3d42c0-6ece-4714-b34a-0251ac6d0cda",
+      "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1787261455707_photo_8_2026-08-20_23-25-00.webp?alt=media&token=2cc31203-3cf1-4c91-b406-b6da8ac0b842",
+      "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1787261455749_photo_7_2026-08-20_23-25-00.webp?alt=media&token=a4ec6020-39e3-4e87-a99a-c6ac49d08130"
+    ],
+    "sizes": [
+      "39",
+      "40",
+      "41",
+      "42",
+      "43"
+    ],
+    "inStock": true,
+    "isFeatured": true
+  },
+  {
+    "id": "len-35607",
+    "name": "ERD Sweater",
+    "price": 3500,
+    "category": "MEN",
+    "description": "",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1784923018790_photo_1_2026-07-24_21-55-16.webp?alt=media&token=7a262e7f-84cd-49f4-981f-20c02a0680cf",
+      "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1784923018761_photo_3_2026-07-24_21-55-29.webp?alt=media&token=3baf5096-906a-4264-80fb-60898bfae521",
+      "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1784923018776_photo_4_2026-07-24_21-55-29.webp?alt=media&token=8af5c176-ba09-4481-8fa8-f9a5d24a6f3a",
+      "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1784923026524_photo_5_2026-07-24_21-55-29.webp?alt=media&token=6e51f5e4-5ae4-4cc2-8ac2-4343b293f74a"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "inStock": true,
+    "isFeatured": true
+  },
+  {
+    "id": "len-88495",
+    "name": "ERD Jeans",
+    "price": 4000,
+    "category": "MEN",
+    "description": "",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1781301420355_photo_1_2026-06-12_23-55-10.webp?alt=media&token=aade93df-44a3-43af-904e-f63ce2ff4a65",
+      "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1781301420297_photo_2_2026-06-12_23-55-10.webp?alt=media&token=245fb002-bc3f-4b3f-908f-ee1507f618ae",
+      "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1781301420427_photo_4_2026-06-12_23-55-10.webp?alt=media&token=eb4c1720-958d-4860-9c8c-2ff9af06c6e3",
+      "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1781301420402_photo_3_2026-06-12_23-55-10.webp?alt=media&token=a0360c1b-efc1-48d1-a36d-32fb99891026"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "inStock": true,
+    "isFeatured": true
+  },
+  {
+    "id": "len-28165",
+    "name": "Saint Laurent Sweater",
+    "price": 3000,
+    "category": "MEN",
+    "description": "",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1781471692378_photo_1_2026-06-14_23-09-57.webp?alt=media&token=fb6eb2ed-7620-48e2-8ddf-77f6d86ebf26"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L"
+    ],
+    "inStock": true,
+    "isFeatured": true
+  },
+  {
     "id": "len-96059",
     "name": "erd hoddie",
     "price": 2900,

@@ -58,19 +58,30 @@ export default function HomePage() {
       </section>
 
 
-      {/* Minimal Editorial Footer */}
-      <footer className="bg-white border-t border-neutral-200 py-12 px-6 sm:px-10">
-        <div className="max-w-[1700px] mx-auto flex flex-col sm:flex-row items-center justify-between text-xs font-bold tracking-[0.2em] uppercase text-neutral-500 gap-6">
-          <div className="flex items-center space-x-4">
-            <div className="relative h-5 w-28">
-              <img src="/logo-black.png" alt="LENWINE" className="h-5 w-auto object-contain" />
+      {/* Minimal Editorial Black Footer */}
+      <footer className="bg-black text-white border-t border-neutral-900 py-12 px-6 sm:px-10">
+        <div className="max-w-[1700px] mx-auto space-y-8">
+          <div className="flex flex-col sm:flex-row items-center justify-between text-xs font-bold tracking-[0.2em] uppercase text-neutral-400 gap-6">
+            <div className="flex items-center space-x-4">
+              <div className="relative h-6 w-32">
+                <img src="/logo-white.png" alt="LENWINE" className="h-6 w-auto object-contain" />
+              </div>
+              <span className="font-mono text-[11px] text-neutral-500">© 2026 ARCHIVE</span>
             </div>
-            <span>© 2026 ARCHIVE</span>
+
+            <div className="flex space-x-8">
+              <Link href="/catalog" className="hover:text-white transition-colors">ALL PRODUCTS</Link>
+              <button onClick={() => setIsSearchOpen(true)} className="hover:text-white transition-colors">SEARCH</button>
+            </div>
           </div>
 
-          <div className="flex space-x-8">
-            <Link href="/catalog" className="hover:text-black">ALL PRODUCTS</Link>
-            <button onClick={() => setIsSearchOpen(true)} className="hover:text-black">SEARCH</button>
+          <div className="border-t border-neutral-900 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[10px] font-mono tracking-[0.25em] text-neutral-500 uppercase">
+            <div>
+              CREATED BY <span className="text-white font-bold">VUNNUTSKYY</span>
+            </div>
+            <div>
+              PROJECT BY <span className="text-white font-bold">VUNNUTSKYY</span> &amp; <span className="text-white font-bold">MATHEW</span>
+            </div>
           </div>
         </div>
       </footer>

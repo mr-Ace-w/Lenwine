@@ -18,7 +18,10 @@ import {
   Image as ImageIcon,
   Lock,
   LogOut,
-  KeyRound
+  KeyRound,
+  ChevronUp,
+  ChevronDown,
+  Pencil
 } from 'lucide-react';
 
 export default function AdminPage() {
@@ -34,15 +37,17 @@ export default function AdminPage() {
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  // New product modal form state
-  const [isAddProductOpen, setIsAddProductOpen] = useState(false);
-  const [newProduct, setNewProduct] = useState({
+  // Product modal form state (Create / Edit)
+  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<ProductType | null>(null);
+  const [urlInput, setUrlInput] = useState('');
+  const [productForm, setProductForm] = useState({
     name: '',
     price: '',
     originalPrice: '',
     category: 'MEN',
     description: '',
-    imagesText: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&q=80&w=1000\nhttps://images.unsplash.com/photo-1520975954732-35dd22299614?auto=format&fit=crop&q=80&w=1000',
+    images: [] as string[],
     sizes: 'S, M, L, XL',
     inStock: true,
     isFeatured: true
@@ -117,6 +122,63 @@ export default function AdminPage() {
     }
   }, [isAuthenticated]);
 
+  const handleOpenCreate = () => {
+    setEditingProduct(null);
+    setProductForm({
+      name: '',
+      price: '',
+      originalPrice: '',
+      category: 'MEN',
+      description: '',
+      images: [],
+      sizes: 'S, M, L, XL',
+      inStock: true,
+      isFeatured: true
+    });
+    setUrlInput('');
+    setIsProductModalOpen(true);
+  };
+
+  const handleOpenEdit = (prod: ProductType) => {
+    setEditingProduct(prod);
+    setProductForm({
+      name: prod.name,
+      price: String(prod.price),
+      originalPrice: prod.originalPrice ? String(prod.originalPrice) : '',
+      category: prod.category,
+      description: prod.description || '',
+      images: [...prod.images],
+      sizes: prod.sizes.join(', '),
+      inStock: prod.inStock !== false,
+      isFeatured: Boolean(prod.isFeatured)
+    });
+    setUrlInput('');
+    setIsProductModalOpen(true);
+  };
+
+  const handleMoveProduct = async (index: number, direction: 'up' | 'down') => {
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= products.length) return;
+
+    const newProducts = [...products];
+    const temp = newProducts[index];
+    newProducts[index] = newProducts[targetIndex];
+    newProducts[targetIndex] = temp;
+
+    // Optimistic UI update
+    setProducts(newProducts);
+
+    try {
+      await fetch('/api/products/reorder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderedIds: newProducts.map(p => p.id) })
+      });
+    } catch (err) {
+      console.error('Error reordering products:', err);
+    }
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -156,56 +218,91 @@ export default function AdminPage() {
     }
 
     if (uploadedUrls.length > 0) {
-      const currentText = newProduct.imagesText.trim();
-      const newText = currentText ? `${currentText}\n${uploadedUrls.join('\n')}` : uploadedUrls.join('\n');
-      setNewProduct({ ...newProduct, imagesText: newText });
+      setProductForm(prev => ({
+        ...prev,
+        images: [...prev.images, ...uploadedUrls]
+      }));
     } else {
-      alert('Переконайся, що у файлі .env.local заповнено ключі Cloudflare R2 (R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY) або Supabase!');
+      alert('Переконайся, що у файлі .env.local заповнено ключі Cloudflare R2 або Supabase!');
     }
     setIsUploading(false);
+    e.target.value = '';
   };
 
-  const handleCreateProduct = async (e: React.FormEvent) => {
+  const handleRemoveImage = (index: number) => {
+    setProductForm(prev => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index)
+    }));
+  };
+
+  const handleReorderImage = (fromIndex: number, toIndex: number) => {
+    setProductForm(prev => {
+      const imgs = [...prev.images];
+      const [moved] = imgs.splice(fromIndex, 1);
+      imgs.splice(toIndex, 0, moved);
+      return { ...prev, images: imgs };
+    });
+  };
+
+  const handleAddUrl = () => {
+    const trimmed = urlInput.trim();
+    if (!trimmed) return;
+    setProductForm(prev => ({
+      ...prev,
+      images: [...prev.images, trimmed]
+    }));
+    setUrlInput('');
+  };
+
+  const handleSaveProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
     try {
-      const parsedImagesList = newProduct.imagesText
-        .split(/[\n,]+/)
-        .map(url => url.trim())
-        .filter(Boolean);
+      const payload = {
+        name: productForm.name,
+        price: Number(productForm.price),
+        originalPrice: productForm.originalPrice ? Number(productForm.originalPrice) : undefined,
+        category: productForm.category,
+        description: productForm.description,
+        images: productForm.images.length > 0 ? productForm.images : ['https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&q=80&w=1000'],
+        sizes: productForm.sizes.split(',').map(s => s.trim()).filter(Boolean),
+        inStock: productForm.inStock,
+        isFeatured: productForm.isFeatured
+      };
 
-      const res = await fetch('/api/products', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...newProduct,
-          price: Number(newProduct.price),
-          originalPrice: newProduct.originalPrice ? Number(newProduct.originalPrice) : undefined,
-          images: parsedImagesList,
-          sizes: newProduct.sizes.split(',').map(s => s.trim())
-        })
-      });
-      if (res.ok) {
-        setIsAddProductOpen(false);
-        setNewProduct({
-          name: '',
-          price: '',
-          originalPrice: '',
-          category: 'MEN',
-          description: '',
-          imagesText: '',
-          sizes: 'S, M, L, XL',
-          inStock: true,
-          isFeatured: true
+      if (editingProduct) {
+        // EDIT existing
+        const res = await fetch(`/api/products/${editingProduct.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
         });
-        await fetchData();
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          alert('Помилка при оновленні товару: ' + (err.error || 'Спробуйте ще раз'));
+          return;
+        }
       } else {
-        const err = await res.json().catch(() => ({}));
-        alert('Помилка при створенні товару: ' + (err.error || 'Спробуйте ще раз'));
+        // CREATE new
+        const res = await fetch('/api/products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          alert('Помилка при створенні товару: ' + (err.error || 'Спробуйте ще раз'));
+          return;
+        }
       }
+
+      setIsProductModalOpen(false);
+      setEditingProduct(null);
+      await fetchData();
     } catch (err) {
       console.error(err);
-      alert('Помилка сервера при створенні товару');
+      alert('Помилка сервера при збереженні товару');
     } finally {
       setIsSaving(false);
     }
@@ -238,10 +335,6 @@ export default function AdminPage() {
     }
   };
 
-  const previewImages = newProduct.imagesText
-    .split(/[\n,]+/)
-    .map(url => url.trim())
-    .filter(Boolean);
 
   const totalRevenue = orders.reduce((sum, o) => sum + o.totalAmount, 0);
   const totalOrdersCount = orders.length;
@@ -491,7 +584,7 @@ export default function AdminPage() {
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
               <h3 className="font-extrabold text-sm sm:text-base tracking-[0.2em] uppercase">УПРАВЛІННЯ КАТАЛОГОМ</h3>
               <button
-                onClick={() => setIsAddProductOpen(true)}
+                onClick={handleOpenCreate}
                 className="bg-black text-white px-5 py-3 text-xs font-bold tracking-[0.2em] uppercase flex items-center justify-center space-x-2 hover:bg-neutral-800 transition-colors shadow-md text-center"
               >
                 <Plus className="w-4 h-4" />
@@ -501,10 +594,11 @@ export default function AdminPage() {
 
             {/* Products Table */}
             <div className="bg-white border border-neutral-200 overflow-x-auto shadow-xs">
-              <table className="w-full text-left text-xs min-w-[620px]">
+              <table className="w-full text-left text-xs min-w-[720px]">
                 <thead className="border-b border-neutral-200 text-neutral-500 uppercase tracking-[0.2em] text-[10px] font-bold bg-neutral-50">
                   <tr>
-                    <th className="py-3 px-4">ФОТО (КІЛЬКІСТЬ)</th>
+                    <th className="py-3 px-4 w-16 text-center">ПОРЯДОК</th>
+                    <th className="py-3 px-4">ФОТО</th>
                     <th className="py-3 px-4">НАЗВА</th>
                     <th className="py-3 px-4">КАТЕГОРІЯ</th>
                     <th className="py-3 px-4">НАЯВНІСТЬ</th>
@@ -514,15 +608,39 @@ export default function AdminPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-neutral-100">
-                  {products.map(prod => (
-                    <tr key={prod.id} className="hover:bg-neutral-50">
+                  {products.map((prod, index) => (
+                    <tr key={prod.id} className="hover:bg-neutral-50 transition-colors">
+                      <td className="py-3 px-4 text-center">
+                        <div className="flex items-center justify-center space-x-1">
+                          <button
+                            onClick={() => handleMoveProduct(index, 'up')}
+                            disabled={index === 0}
+                            title="Підняти вище в каталозі"
+                            className="p-1.5 bg-neutral-100 hover:bg-black hover:text-white text-neutral-700 border border-neutral-200 disabled:opacity-20 disabled:hover:bg-neutral-100 disabled:hover:text-neutral-700 transition-colors cursor-pointer disabled:cursor-not-allowed"
+                          >
+                            <ChevronUp className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleMoveProduct(index, 'down')}
+                            disabled={index === products.length - 1}
+                            title="Опустити нижче в каталозі"
+                            className="p-1.5 bg-neutral-100 hover:bg-black hover:text-white text-neutral-700 border border-neutral-200 disabled:opacity-20 disabled:hover:bg-neutral-100 disabled:hover:text-neutral-700 transition-colors cursor-pointer disabled:cursor-not-allowed"
+                          >
+                            <ChevronDown className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </td>
                       <td className="py-3 px-4">
                         <div className="flex items-center space-x-2">
                           <div className="relative w-10 h-12 bg-neutral-100 border border-neutral-200 flex-shrink-0">
-                            <Image src={prod.images[0]} alt={prod.name} fill className="object-cover" />
+                            {prod.images && prod.images[0] ? (
+                              <Image src={prod.images[0]} alt={prod.name} fill className="object-cover" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-[8px] text-neutral-400">НЕМАЄ</div>
+                            )}
                           </div>
                           <span className="text-[10px] font-mono font-bold text-neutral-600 bg-neutral-100 px-2 py-1 border border-neutral-200">
-                            {prod.images.length} фото
+                            {prod.images?.length || 0} фото
                           </span>
                         </div>
                       </td>
@@ -538,14 +656,24 @@ export default function AdminPage() {
                       <td className="py-3 px-4 font-mono font-bold text-black">
                         {prod.price.toLocaleString('uk-UA')} ₴
                       </td>
-                      <td className="py-3 px-4 text-neutral-600 font-mono text-[11px]">{prod.sizes.join(', ')}</td>
+                      <td className="py-3 px-4 text-neutral-600 font-mono text-[11px]">{prod.sizes?.join(', ')}</td>
                       <td className="py-3 px-4 text-right">
-                        <button
-                          onClick={() => handleDeleteProduct(prod.id)}
-                          className="p-1.5 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 transition-colors ml-2"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                        <div className="flex items-center justify-end space-x-1.5">
+                          <button
+                            onClick={() => handleOpenEdit(prod)}
+                            title="Редагувати товар"
+                            className="p-1.5 bg-neutral-100 hover:bg-black hover:text-white text-neutral-700 border border-neutral-200 transition-colors"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteProduct(prod.id)}
+                            title="Видалити товар"
+                            className="p-1.5 bg-red-50 hover:bg-red-600 hover:text-white text-red-700 border border-red-200 transition-colors"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -624,21 +752,30 @@ export default function AdminPage() {
         )}
       </div>
 
-      {/* Add Product Modal */}
-      {isAddProductOpen && (
+      {/* Add / Edit Product Modal */}
+      {isProductModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-xs" onClick={() => setIsAddProductOpen(false)} />
-          <div className="relative w-full max-w-lg bg-white border border-neutral-300 p-4 sm:p-8 shadow-2xl z-10 animate-fade-in text-black max-h-[92vh] overflow-y-auto">
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-xs" onClick={() => setIsProductModalOpen(false)} />
+          <div className="relative w-full max-w-2xl bg-white border border-neutral-300 p-5 sm:p-8 shadow-2xl z-10 animate-fade-in text-black max-h-[92vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-neutral-200 pb-3 sm:pb-4 mb-4 sm:mb-6">
-              <h3 className="font-bold text-sm sm:text-base tracking-[0.2em] uppercase text-black">
-                ДОДАТИ НОВИЙ ТОВАР
-              </h3>
-              <button onClick={() => setIsAddProductOpen(false)} aria-label="Закрити">
+              <div>
+                <h3 className="font-extrabold text-sm sm:text-base tracking-[0.2em] uppercase text-black">
+                  {editingProduct ? 'РЕДАГУВАТИ ТОВАР' : 'ДОДАТИ НОВИЙ ТОВАР'}
+                </h3>
+                {editingProduct && (
+                  <p className="text-[10px] text-neutral-400 font-mono mt-0.5">ID: {editingProduct.id}</p>
+                )}
+              </div>
+              <button
+                onClick={() => setIsProductModalOpen(false)}
+                aria-label="Закрити"
+                className="p-1 hover:bg-neutral-100 rounded-sm transition-colors"
+              >
                 <X className="w-5 h-5 text-neutral-400 hover:text-black" />
               </button>
             </div>
 
-            <form onSubmit={handleCreateProduct} className="space-y-4 text-xs font-medium">
+            <form onSubmit={handleSaveProduct} className="space-y-4 text-xs font-medium">
               <div>
                 <label className="block text-[10px] uppercase text-neutral-500 font-bold mb-1">
                   НАЗВА ТОВАРУ *
@@ -647,9 +784,9 @@ export default function AdminPage() {
                   type="text"
                   required
                   placeholder="LENWINE VINTAGE HOODIE"
-                  value={newProduct.name}
-                  onChange={e => setNewProduct({ ...newProduct, name: e.target.value })}
-                  className="w-full bg-white border border-neutral-300 p-2.5 focus:border-black outline-hidden"
+                  value={productForm.name}
+                  onChange={e => setProductForm({ ...productForm, name: e.target.value })}
+                  className="w-full bg-white border border-neutral-300 p-2.5 focus:border-black outline-hidden font-bold"
                 />
               </div>
 
@@ -662,8 +799,20 @@ export default function AdminPage() {
                     type="number"
                     required
                     placeholder="8500"
-                    value={newProduct.price}
-                    onChange={e => setNewProduct({ ...newProduct, price: e.target.value })}
+                    value={productForm.price}
+                    onChange={e => setProductForm({ ...productForm, price: e.target.value })}
+                    className="w-full bg-white border border-neutral-300 p-2.5 focus:border-black outline-hidden font-mono font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] uppercase text-neutral-500 font-bold mb-1">
+                    СТАРА ЦІНА (ОПЦІЙНО)
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="9900"
+                    value={productForm.originalPrice}
+                    onChange={e => setProductForm({ ...productForm, originalPrice: e.target.value })}
                     className="w-full bg-white border border-neutral-300 p-2.5 focus:border-black outline-hidden font-mono"
                   />
                 </div>
@@ -672,8 +821,8 @@ export default function AdminPage() {
                     КАТЕГОРІЯ *
                   </label>
                   <select
-                    value={newProduct.category}
-                    onChange={e => setNewProduct({ ...newProduct, category: e.target.value })}
+                    value={productForm.category}
+                    onChange={e => setProductForm({ ...productForm, category: e.target.value })}
                     className="w-full bg-white border border-neutral-300 p-2.5 focus:border-black outline-hidden uppercase font-bold"
                   >
                     <option value="MEN">HOMME (MEN)</option>
@@ -683,30 +832,53 @@ export default function AdminPage() {
                     <option value="NEW">NEW ARRIVALS</option>
                   </select>
                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-[10px] uppercase text-neutral-500 font-bold mb-1">
                     НАЯВНІСТЬ *
                   </label>
                   <select
-                    value={newProduct.inStock ? 'true' : 'false'}
-                    onChange={e => setNewProduct({ ...newProduct, inStock: e.target.value === 'true' })}
+                    value={productForm.inStock ? 'true' : 'false'}
+                    onChange={e => setProductForm({ ...productForm, inStock: e.target.value === 'true' })}
                     className="w-full bg-white border border-neutral-300 p-2.5 focus:border-black outline-hidden uppercase font-bold"
                   >
                     <option value="true">В НАЯВНОСТІ</option>
                     <option value="false">ПІД ЗАМОВЛЕННЯ</option>
                   </select>
                 </div>
+                <div>
+                  <label className="block text-[10px] uppercase text-neutral-500 font-bold mb-1">
+                    РОЗМІРИ (ЧЕРЕЗ КОМУ) *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="S, M, L, XL"
+                    value={productForm.sizes}
+                    onChange={e => setProductForm({ ...productForm, sizes: e.target.value })}
+                    className="w-full bg-white border border-neutral-300 p-2.5 focus:border-black outline-hidden font-mono"
+                  />
+                </div>
               </div>
 
-              {/* Cloudflare R2 / Supabase Upload */}
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="block text-[10px] uppercase text-neutral-500 font-bold">
-                    ФОТОГРАФІЇ (CLOUDFLARE R2 / URL) *
-                  </label>
-                  <label className="cursor-pointer text-[10px] font-bold text-blue-900 bg-blue-100 hover:bg-blue-200 border border-blue-300 px-2.5 py-1 flex items-center space-x-1 uppercase">
-                    <Upload className="w-3 h-3" />
-                    <span>{isUploading ? 'ЗАВАНТАЖЕННЯ В R2...' : 'ОБРАТИ ФАЙЛИ ДЛЯ R2'}</span>
+              {/* Direct Gallery Upload & Visual Reorder Section */}
+              <div className="border border-neutral-200 p-4 bg-neutral-50/70 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <label className="block text-[11px] uppercase text-black font-extrabold tracking-wider">
+                      ФОТОГРАФІЇ ТОВАРУ ({productForm.images.length}) *
+                    </label>
+                    <p className="text-[10px] text-neutral-500 font-medium">
+                      Перше фото є головною обкладинкою. Стрілками ◀ / ▶ можна змінювати порядок фото.
+                    </p>
+                  </div>
+
+                  {/* Device / Gallery Direct Upload Button */}
+                  <label className={`cursor-pointer inline-flex items-center justify-center space-x-2 px-4 py-2.5 bg-black text-white hover:bg-neutral-800 transition-colors font-bold text-xs uppercase tracking-wider shadow-xs ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}>
+                    <Upload className="w-4 h-4" />
+                    <span>{isUploading ? 'ЗАВАНТАЖЕННЯ...' : '+ ЗАВАНТАЖИТИ З ГАЛЕРЕЇ'}</span>
                     <input
                       type="file"
                       multiple
@@ -718,45 +890,87 @@ export default function AdminPage() {
                   </label>
                 </div>
 
-                <textarea
-                  required
-                  rows={3}
-                  placeholder={`https://pub-xxx.r2.dev/products/photo1.jpg\nhttps://domain.com/photo2.jpg`}
-                  value={newProduct.imagesText}
-                  onChange={e => setNewProduct({ ...newProduct, imagesText: e.target.value })}
-                  className="w-full bg-white border border-neutral-300 p-2.5 focus:border-black outline-hidden font-mono text-[11px]"
-                />
+                {/* Direct URL input fallback */}
+                <div className="flex items-center space-x-2 pt-1">
+                  <input
+                    type="url"
+                    placeholder="Або вставте посилання на фото (URL)"
+                    value={urlInput}
+                    onChange={e => setUrlInput(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleAddUrl();
+                      }
+                    }}
+                    className="flex-1 bg-white border border-neutral-300 px-3 py-2 text-xs font-mono outline-hidden focus:border-black"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddUrl}
+                    className="px-3 py-2 bg-neutral-200 hover:bg-neutral-300 text-black font-bold text-xs uppercase transition-colors"
+                  >
+                    ДОДАТИ
+                  </button>
+                </div>
 
-                {/* Live Photo Gallery Preview */}
-                {previewImages.length > 0 && (
-                  <div className="mt-3">
-                    <p className="text-[9px] uppercase tracking-widest text-neutral-400 font-bold mb-1 flex items-center space-x-1">
-                      <ImageIcon className="w-3 h-3" />
-                      <span>ПОПЕРЕДНІЙ ПЕРЕГЛЯД ГАЛЕРЕЇ ({previewImages.length} ФОТО):</span>
-                    </p>
-                    <div className="flex space-x-2 overflow-x-auto pt-1">
-                      {previewImages.map((imgUrl, i) => (
-                        <div key={i} className="relative w-14 h-16 bg-neutral-100 border border-neutral-300 flex-shrink-0">
-                          <img src={imgUrl} alt={`Preview ${i}`} className="w-full h-full object-cover" />
+                {/* Visual Image Grid with Reorder and Delete Controls */}
+                {productForm.images.length > 0 ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+                    {productForm.images.map((imgUrl, i) => (
+                      <div
+                        key={i}
+                        className={`relative group border ${i === 0 ? 'border-black ring-2 ring-black/20' : 'border-neutral-300'} bg-white p-1`}
+                      >
+                        <div className="relative aspect-[3/4] w-full bg-neutral-100 overflow-hidden">
+                          <img src={imgUrl} alt={`Photo ${i + 1}`} className="w-full h-full object-cover" />
+                          {i === 0 && (
+                            <span className="absolute top-1 left-1 bg-black text-white text-[9px] font-bold px-1.5 py-0.5 tracking-wider uppercase font-mono shadow-xs">
+                              ГОЛОВНЕ
+                            </span>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveImage(i)}
+                            title="Видалити фото"
+                            className="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white p-1 shadow-md transition-colors"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
                         </div>
-                      ))}
-                    </div>
+                        <div className="flex items-center justify-between mt-1.5 px-0.5 text-[10px] font-mono text-neutral-600">
+                          <span className="font-bold">#{i + 1}</span>
+                          <div className="flex items-center space-x-1">
+                            <button
+                              type="button"
+                              onClick={() => handleReorderImage(i, i - 1)}
+                              disabled={i === 0}
+                              className="px-2 py-0.5 bg-neutral-100 hover:bg-neutral-200 disabled:opacity-20 text-neutral-800 border border-neutral-200 transition-colors"
+                              title="Пересунути лівіше"
+                            >
+                              ◀
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleReorderImage(i, i + 1)}
+                              disabled={i === productForm.images.length - 1}
+                              className="px-2 py-0.5 bg-neutral-100 hover:bg-neutral-200 disabled:opacity-20 text-neutral-800 border border-neutral-200 transition-colors"
+                              title="Пересунути правіше"
+                            >
+                              ▶
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-6 border-2 border-dashed border-neutral-300 bg-white">
+                    <ImageIcon className="w-8 h-8 text-neutral-300 mx-auto mb-2" />
+                    <p className="text-xs text-neutral-600 font-bold uppercase tracking-wider">Немає фотографій</p>
+                    <p className="text-[10px] text-neutral-400 mt-0.5">Натисніть "+ ЗАВАНТАЖИТИ З ГАЛЕРЕЇ", щоб додати фото з вашого телефону або ПК</p>
                   </div>
                 )}
-              </div>
-
-              <div>
-                <label className="block text-[10px] uppercase text-neutral-500 font-bold mb-1">
-                  РОЗМІРИ (ЧЕРЕЗ КОМУ) *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="S, M, L, XL"
-                  value={newProduct.sizes}
-                  onChange={e => setNewProduct({ ...newProduct, sizes: e.target.value })}
-                  className="w-full bg-white border border-neutral-300 p-2.5 focus:border-black outline-hidden"
-                />
               </div>
 
               <div>
@@ -764,10 +978,10 @@ export default function AdminPage() {
                   ОПИС ТОВАРУ
                 </label>
                 <textarea
-                  rows={2}
+                  rows={3}
                   placeholder="Преміальний авторський дизайн LENWINE..."
-                  value={newProduct.description}
-                  onChange={e => setNewProduct({ ...newProduct, description: e.target.value })}
+                  value={productForm.description}
+                  onChange={e => setProductForm({ ...productForm, description: e.target.value })}
                   className="w-full bg-white border border-neutral-300 p-2.5 focus:border-black outline-hidden"
                 />
               </div>
@@ -776,14 +990,14 @@ export default function AdminPage() {
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="flex-1 bg-black text-white py-3.5 text-xs font-bold uppercase tracking-[0.2em] hover:bg-neutral-800 transition-colors shadow-md disabled:opacity-50 text-center"
+                  className="flex-1 bg-black text-white py-3.5 text-xs font-bold uppercase tracking-[0.2em] hover:bg-neutral-800 transition-colors shadow-md disabled:opacity-50 text-center cursor-pointer"
                 >
-                  {isSaving ? 'ЗБЕРЕЖЕННЯ...' : 'ЗБЕРЕГТИ ТОВАР'}
+                  {isSaving ? 'ЗБЕРЕЖЕННЯ...' : editingProduct ? 'ОНОВИТИ ТОВАР' : 'ЗБЕРЕГТИ ТОВАР'}
                 </button>
                 <button
                   type="button"
-                  onClick={() => setIsAddProductOpen(false)}
-                  className="px-6 py-3.5 bg-neutral-100 text-neutral-600 text-xs font-bold uppercase tracking-widest hover:text-black text-center"
+                  onClick={() => setIsProductModalOpen(false)}
+                  className="px-6 py-3.5 bg-neutral-100 text-neutral-600 hover:text-black hover:bg-neutral-200 text-xs font-bold uppercase tracking-widest transition-colors text-center cursor-pointer"
                 >
                   СКАСУВАТИ
                 </button>

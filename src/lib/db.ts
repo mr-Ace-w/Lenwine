@@ -178,6 +178,40 @@ export const deleteProduct = async (id: string): Promise<boolean> => {
   return true;
 };
 
+export const reorderProducts = async (orderedIds: string[]): Promise<ProductType[]> => {
+  const current = readLocalProducts();
+  const idMap = new Map(current.map(p => [p.id, p]));
+  const reordered: ProductType[] = [];
+
+  for (const id of orderedIds) {
+    const item = idMap.get(id);
+    if (item) {
+      reordered.push(item);
+      idMap.delete(id);
+    }
+  }
+  for (const item of idMap.values()) {
+    reordered.push(item);
+  }
+
+  writeLocalProducts(reordered);
+
+  if (supabase) {
+    try {
+      const baseTime = Date.now();
+      for (let i = 0; i < reordered.length; i++) {
+        const prod = reordered[i];
+        const newCreatedAt = new Date(baseTime - i * 1000).toISOString();
+        await supabase.from('products').update({ created_at: newCreatedAt }).eq('id', prod.id);
+      }
+    } catch (err) {
+      console.error('Supabase reorder error:', err);
+    }
+  }
+
+  return reordered;
+};
+
 export const getOrders = async (): Promise<OrderType[]> => {
   if (supabase) {
     try {
