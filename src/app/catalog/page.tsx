@@ -37,15 +37,32 @@ function CatalogContent() {
       });
   }, []);
 
-  const filteredProducts = activeCategory === 'ALL'
-    ? products
-    : products.filter(p => p.category.toUpperCase() === activeCategory.toUpperCase());
+  useEffect(() => {
+    const cat = searchParams.get('category') || 'ALL';
+    setActiveCategory(cat);
+  }, [searchParams]);
+
+  const filteredProducts = products.filter(p => {
+    if (activeCategory === 'ALL') return true;
+    if (activeCategory === 'IN_STOCK') return p.inStock !== false;
+    if (activeCategory === 'PREORDER') {
+      return p.inStock === false || p.category.toUpperCase() === 'PREORDER' || p.category.toUpperCase() === 'ПІД ЗАМОВЛЕННЯ';
+    }
+    if (activeCategory === 'BRANDS') {
+      const hasBrandsCat = products.some(prod => prod.category.toUpperCase() === 'BRANDS');
+      return hasBrandsCat ? p.category.toUpperCase() === 'BRANDS' : true;
+    }
+    return p.category.toUpperCase() === activeCategory.toUpperCase();
+  });
 
   const getCategoryTitle = () => {
     switch (activeCategory) {
       case 'MEN': return 'HOMME > NEW ARRIVALS';
       case 'WOMEN': return 'FEMME > NEW ARRIVALS';
       case 'ACCESSORIES': return 'ACCESSORIES > COLLECTION';
+      case 'BRANDS': return 'COLLECTIONS > BRANDS';
+      case 'PREORDER': return 'COLLECTIONS > ПІД ЗАМОВЛЕННЯ';
+      case 'IN_STOCK': return 'COLLECTIONS > В НАЯВНОСТІ';
       default: return 'COLLECTIONS > ALL PRODUCTS';
     }
   };
@@ -74,9 +91,11 @@ function CatalogContent() {
         <div className="max-w-[1700px] mx-auto w-full px-4 sm:px-10 pb-6 sm:pb-8 flex flex-wrap gap-2.5 sm:gap-4 border-b border-neutral-200 animate-fade-in text-[11px] sm:text-xs font-bold tracking-[0.15em]">
           {[
             { label: 'ALL PRODUCTS', val: 'ALL' },
+            { label: 'BRANDS', val: 'BRANDS' },
+            { label: 'В НАЯВНОСТІ', val: 'IN_STOCK' },
+            { label: 'ПІД ЗАМОВЛЕННЯ', val: 'PREORDER' },
             { label: 'HOMME (MEN)', val: 'MEN' },
             { label: 'FEMME (WOMEN)', val: 'WOMEN' },
-            { label: 'NEW ARRIVALS', val: 'NEW' },
           ].map(cat => (
             <button
               key={cat.val}

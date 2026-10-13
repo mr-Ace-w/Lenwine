@@ -23,9 +23,9 @@ export default function Header({ onSearchClick }: HeaderProps) {
 
   const menuItems = [
     { label: 'ALL PRODUCTS', href: '/catalog' },
-    { label: 'COLLECTIONS', href: '/catalog?category=MEN' },
-    { label: 'ARCHIVE', href: '/catalog?category=ALL' },
-    { label: 'STORES / LOCATIONS', href: '/catalog' },
+    { label: 'BRANDS', href: '/catalog?category=BRANDS' },
+    { label: 'ПІД ЗАМОВЛЕННЯ', href: '/catalog?category=PREORDER' },
+    { label: 'В НАЯВНОСТІ', href: '/catalog?category=IN_STOCK' },
   ];
 
   return (

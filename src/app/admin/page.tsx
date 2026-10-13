@@ -507,6 +507,7 @@ export default function AdminPage() {
                     <th className="py-3 px-4">ФОТО (КІЛЬКІСТЬ)</th>
                     <th className="py-3 px-4">НАЗВА</th>
                     <th className="py-3 px-4">КАТЕГОРІЯ</th>
+                    <th className="py-3 px-4">НАЯВНІСТЬ</th>
                     <th className="py-3 px-4">ЦІНА</th>
                     <th className="py-3 px-4">РОЗМІРИ</th>
                     <th className="py-3 px-4 text-right">ДІЇ</th>
@@ -527,6 +528,13 @@ export default function AdminPage() {
                       </td>
                       <td className="py-3 px-4 font-bold text-black">{prod.name}</td>
                       <td className="py-3 px-4 text-neutral-500 uppercase tracking-wider font-mono text-[11px]">{prod.category}</td>
+                      <td className="py-3 px-4">
+                        <span className={`px-2 py-0.5 text-[9px] font-bold tracking-wider uppercase font-mono ${
+                          prod.inStock !== false ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-amber-50 text-amber-800 border border-amber-200'
+                        }`}>
+                          {prod.inStock !== false ? 'В НАЯВНОСТІ' : 'ПІД ЗАМОВЛЕННЯ'}
+                        </span>
+                      </td>
                       <td className="py-3 px-4 font-mono font-bold text-black">
                         {prod.price.toLocaleString('uk-UA')} ₴
                       </td>
@@ -645,7 +653,7 @@ export default function AdminPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-[10px] uppercase text-neutral-500 font-bold mb-1">
                     ЦІНА (₴) *
@@ -668,10 +676,24 @@ export default function AdminPage() {
                     onChange={e => setNewProduct({ ...newProduct, category: e.target.value })}
                     className="w-full bg-white border border-neutral-300 p-2.5 focus:border-black outline-hidden uppercase font-bold"
                   >
-                    <option value="MEN">MEN</option>
-                    <option value="WOMEN">WOMEN</option>
+                    <option value="MEN">HOMME (MEN)</option>
+                    <option value="WOMEN">FEMME (WOMEN)</option>
+                    <option value="BRANDS">BRANDS</option>
                     <option value="ACCESSORIES">ACCESSORIES</option>
-                    <option value="NEW">NEW</option>
+                    <option value="NEW">NEW ARRIVALS</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] uppercase text-neutral-500 font-bold mb-1">
+                    НАЯВНІСТЬ *
+                  </label>
+                  <select
+                    value={newProduct.inStock ? 'true' : 'false'}
+                    onChange={e => setNewProduct({ ...newProduct, inStock: e.target.value === 'true' })}
+                    className="w-full bg-white border border-neutral-300 p-2.5 focus:border-black outline-hidden uppercase font-bold"
+                  >
+                    <option value="true">В НАЯВНОСТІ</option>
+                    <option value="false">ПІД ЗАМОВЛЕННЯ</option>
                   </select>
                 </div>
               </div>

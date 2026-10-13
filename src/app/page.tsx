@@ -8,7 +8,6 @@ import SearchModal from '@/components/SearchModal';
 import QuickViewModal from '@/components/QuickViewModal';
 import CheckoutModal from '@/components/CheckoutModal';
 import { ProductType } from '@/lib/products-data';
-import { ArrowDown } from 'lucide-react';
 
 export default function HomePage() {
   const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(null);
@@ -54,39 +53,7 @@ export default function HomePage() {
             <source src="https://pub-cfcb590cd8cc49a8acccc56630e96549.r2.dev/videos/hero.mp4?v=2" type="video/mp4" />
             <source src="/hero.mp4" type="video/mp4" />
           </video>
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/20" />
-        </div>
-
-        {/* Hero Overlay Content */}
-        <div className="relative z-10 max-w-[1700px] mx-auto w-full px-5 sm:px-12 pb-10 sm:pb-16 space-y-4 sm:space-y-6 text-white">
-          <div className="space-y-2 sm:space-y-3">
-            <span className="text-[9px] sm:text-[10px] font-mono tracking-[0.35em] sm:tracking-[0.4em] uppercase text-neutral-300 font-bold">
-              AUTUMN / WINTER 2026 ARCHIVE
-            </span>
-            <h1 className="font-erd-logo text-5xl sm:text-7xl lg:text-8xl tracking-[0.18em] sm:tracking-[0.2em] uppercase text-white leading-none">
-              LENWINE
-            </h1>
-            <p className="max-w-md text-[11px] sm:text-sm text-neutral-300 tracking-[0.18em] sm:tracking-[0.2em] font-mono uppercase leading-relaxed">
-              ENFANTS RICHES DÉPRIMÉS ESTHÉTIQUE • DISTRESSED LEATHER • PUNK COUTURE
-            </p>
-          </div>
-
-          <div className="pt-2 sm:pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-6 w-full sm:w-auto">
-            <Link
-              href="/catalog"
-              className="bg-white text-black px-6 sm:px-8 py-3.5 sm:py-4 text-xs font-extrabold tracking-[0.2em] sm:tracking-[0.25em] uppercase hover:bg-neutral-200 transition-all flex items-center justify-center space-x-2 shadow-2xl text-center"
-            >
-              <span>DISCOVER ALL PRODUCTS</span>
-              <ArrowDown className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-            </Link>
-
-            <Link
-              href="/catalog?category=MEN"
-              className="bg-black/60 backdrop-blur-md border border-white/30 text-white px-6 sm:px-8 py-3.5 sm:py-4 text-xs font-extrabold tracking-[0.2em] sm:tracking-[0.25em] uppercase hover:bg-white hover:text-black transition-all text-center"
-            >
-              SELECT COLLECTION
-            </Link>
-          </div>
+          <div className="absolute inset-0 bg-black/15" />
         </div>
       </section>
 
