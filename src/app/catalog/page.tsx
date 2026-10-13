@@ -8,11 +8,15 @@ import CartDrawer from '@/components/CartDrawer';
 import SearchModal from '@/components/SearchModal';
 import QuickViewModal from '@/components/QuickViewModal';
 import CheckoutModal from '@/components/CheckoutModal';
-import { ProductType } from '@/lib/products-data';
-import { SlidersHorizontal } from 'lucide-react';
+import { ProductType, CLOTHING_TYPES } from '@/lib/products-data';
+import { SlidersHorizontal, X } from 'lucide-react';
+import Link from 'next/link';
 
 function CatalogContent() {
   const searchParams = useSearchParams();
+  const brandParam = searchParams.get('brand');
+  const typeParam = searchParams.get('type');
+  const availabilityParam = searchParams.get('availability');
   const initialCategory = searchParams.get('category') || 'ALL';
 
   const [products, setProducts] = useState<ProductType[]>([]);
@@ -42,73 +46,180 @@ function CatalogContent() {
     setActiveCategory(cat);
   }, [searchParams]);
 
+  const matchesType = (p: ProductType, type: string) => {
+    if (!type || type === 'all') return true;
+    if (p.clothingType && p.clothingType.toLowerCase() === type.toLowerCase()) {
+      return true;
+    }
+    const name = p.name.toLowerCase();
+    switch (type.toLowerCase()) {
+      case 'tshirts':
+        return name.includes('tee') || name.includes('t-shirt') || name.includes('shirt') || name.includes('лонг') || name.includes('футболк');
+      case 'sweaters':
+        return name.includes('sweater') || name.includes('hoodie') || name.includes('hoddie') || name.includes('светр') || name.includes('худі') || name.includes('кофт');
+      case 'jackets':
+        return name.includes('jacket') || name.includes('coat') || name.includes('bomber') || name.includes('куртк') || name.includes('пуховик');
+      case 'pants':
+        return name.includes('jean') || name.includes('pant') || name.includes('trouser') || name.includes('джинс') || name.includes('штани');
+      case 'shorts':
+        return name.includes('short') || name.includes('шорт');
+      case 'shoes':
+        return name.includes('boot') || name.includes('shoe') || name.includes('sneaker') || name.includes('derby') || name.includes('взутт') || name.includes('черевик') || name.includes('кросівк');
+      case 'headwear':
+        return name.includes('cap') || name.includes('hat') || name.includes('beanie') || name.includes('кепк') || name.includes('шапк');
+      case 'accessories':
+        return name.includes('belt') || name.includes('bag') || name.includes('wallet') || name.includes('chain') || name.includes('ring') || name.includes('аксесуар');
+      default:
+        return true;
+    }
+  };
+
+  const matchesBrand = (p: ProductType, brand: string) => {
+    if (!brand) return true;
+    const b = brand.toLowerCase();
+    if (p.brand && p.brand.toLowerCase() === b) return true;
+    return p.name.toLowerCase().includes(b);
+  };
+
   const filteredProducts = products.filter(p => {
-    if (activeCategory === 'ALL') return true;
-    if (activeCategory === 'IN_STOCK') return p.inStock !== false;
-    if (activeCategory === 'PREORDER') {
-      return p.inStock === false || p.category.toUpperCase() === 'PREORDER' || p.category.toUpperCase() === 'ПІД ЗАМОВЛЕННЯ';
+    // 1. Brand filter
+    if (brandParam && !matchesBrand(p, brandParam)) {
+      return false;
     }
-    if (activeCategory === 'BRANDS') {
-      const hasBrandsCat = products.some(prod => prod.category.toUpperCase() === 'BRANDS');
-      return hasBrandsCat ? p.category.toUpperCase() === 'BRANDS' : true;
+
+    // 2. Clothing Type filter
+    if (typeParam && !matchesType(p, typeParam)) {
+      return false;
     }
-    return p.category.toUpperCase() === activeCategory.toUpperCase();
+
+    // 3. Availability filter
+    const effectiveAvailability = availabilityParam || (activeCategory === 'IN_STOCK' ? 'IN_STOCK' : activeCategory === 'PREORDER' ? 'PREORDER' : null);
+    if (effectiveAvailability === 'IN_STOCK') {
+      if (p.inStock === false) return false;
+    } else if (effectiveAvailability === 'PREORDER') {
+      if (p.inStock !== false && p.category.toUpperCase() !== 'PREORDER' && p.category.toUpperCase() !== 'ПІД ЗАМОВЛЕННЯ') return false;
+    }
+
+    // 4. Legacy category filter
+    if (!brandParam && !typeParam && !availabilityParam) {
+      if (activeCategory === 'ALL') return true;
+      if (activeCategory === 'IN_STOCK') return p.inStock !== false;
+      if (activeCategory === 'PREORDER') {
+        return p.inStock === false || p.category.toUpperCase() === 'PREORDER' || p.category.toUpperCase() === 'ПІД ЗАМОВЛЕННЯ';
+      }
+      if (activeCategory === 'BRANDS') return true;
+      return p.category.toUpperCase() === activeCategory.toUpperCase();
+    }
+
+    return true;
   });
 
   const getCategoryTitle = () => {
-    switch (activeCategory) {
-      case 'MEN': return 'HOMME > NEW ARRIVALS';
-      case 'WOMEN': return 'FEMME > NEW ARRIVALS';
-      case 'ACCESSORIES': return 'ACCESSORIES > COLLECTION';
-      case 'BRANDS': return 'COLLECTIONS > BRANDS';
-      case 'PREORDER': return 'COLLECTIONS > ПІД ЗАМОВЛЕННЯ';
-      case 'IN_STOCK': return 'COLLECTIONS > В НАЯВНОСТІ';
-      default: return 'COLLECTIONS > ALL PRODUCTS';
+    if (brandParam) {
+      return `БРЕНДИ > ${brandParam.toUpperCase()}`;
     }
+
+    const effectiveAvailability = availabilityParam || (activeCategory === 'IN_STOCK' ? 'IN_STOCK' : activeCategory === 'PREORDER' ? 'PREORDER' : null);
+    let prefix = 'КОЛЕКЦІЯ';
+    if (effectiveAvailability === 'IN_STOCK') {
+      prefix = 'В НАЯВНОСТІ';
+    } else if (effectiveAvailability === 'PREORDER') {
+      prefix = 'ПІД ЗАМОВЛЕННЯ';
+    } else if (!typeParam) {
+      prefix = 'ВСІ ТОВАРИ';
+    }
+
+    if (typeParam && typeParam !== 'all') {
+      const found = CLOTHING_TYPES.find(t => t.id === typeParam);
+      const label = found ? found.label : typeParam.toUpperCase();
+      return `${prefix} > ${label}`;
+    }
+
+    return prefix;
   };
+
+  const hasActiveFilters = Boolean(brandParam || typeParam || availabilityParam || (activeCategory !== 'ALL' && activeCategory !== ''));
 
   return (
     <main className="min-h-screen bg-white text-black flex flex-col selection:bg-black selection:text-white pt-20 sm:pt-24">
       <Header onSearchClick={() => setIsSearchOpen(true)} />
 
-      {/* ERD Collection Section Header (Screenshot Exact Layout) */}
-      <section className="max-w-[1700px] mx-auto w-full px-4 sm:px-10 pt-6 sm:pt-10 pb-6 sm:pb-12 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <h1 className="font-extrabold text-xl sm:text-3xl lg:text-4xl tracking-[0.08em] sm:tracking-[0.1em] text-black uppercase">
-          {getCategoryTitle()}
-        </h1>
+      {/* ERD Collection Section Header */}
+      <section className="max-w-[1700px] mx-auto w-full px-4 sm:px-10 pt-6 sm:pt-10 pb-6 sm:pb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="font-extrabold text-xl sm:text-3xl lg:text-4xl tracking-[0.08em] sm:tracking-[0.1em] text-black uppercase">
+            {getCategoryTitle()}
+          </h1>
+          {hasActiveFilters && (
+            <div className="flex items-center space-x-2 mt-2">
+              <span className="text-[10px] font-mono uppercase text-neutral-400">
+                Знайдено {filteredProducts.length} позицій
+              </span>
+              <span>•</span>
+              <Link
+                href="/catalog"
+                className="text-[10px] font-mono uppercase font-bold text-neutral-600 hover:text-black flex items-center space-x-1 underline underline-offset-2"
+              >
+                <span>Скинути фільтри</span>
+                <X className="w-3 h-3" />
+              </Link>
+            </div>
+          )}
+        </div>
 
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className="self-start sm:self-auto bg-black text-white px-5 sm:px-6 py-2.5 sm:py-3 text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase hover:bg-neutral-800 transition-colors flex items-center space-x-2 shadow-xs"
+          className="self-start sm:self-auto bg-black text-white px-5 sm:px-6 py-2.5 sm:py-3 text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase hover:bg-neutral-800 transition-colors flex items-center space-x-2 shadow-xs cursor-pointer"
         >
           <SlidersHorizontal className="w-3.5 h-3.5" />
-          <span>FILTERS</span>
+          <span>{showFilters ? 'ЗАКРИТИ ФІЛЬТРИ' : 'ФІЛЬТРИ'}</span>
         </button>
       </section>
 
       {/* Filter Options Bar */}
       {showFilters && (
-        <div className="max-w-[1700px] mx-auto w-full px-4 sm:px-10 pb-6 sm:pb-8 flex flex-wrap gap-2.5 sm:gap-4 border-b border-neutral-200 animate-fade-in text-[11px] sm:text-xs font-bold tracking-[0.15em]">
-          {[
-            { label: 'ALL PRODUCTS', val: 'ALL' },
-            { label: 'BRANDS', val: 'BRANDS' },
-            { label: 'В НАЯВНОСТІ', val: 'IN_STOCK' },
-            { label: 'ПІД ЗАМОВЛЕННЯ', val: 'PREORDER' },
-            { label: 'HOMME (MEN)', val: 'MEN' },
-            { label: 'FEMME (WOMEN)', val: 'WOMEN' },
-          ].map(cat => (
-            <button
-              key={cat.val}
-              onClick={() => setActiveCategory(cat.val)}
-              className={`px-3.5 sm:px-4 py-2 border transition-colors ${
-                activeCategory === cat.val
-                  ? 'bg-black text-white border-black'
-                  : 'bg-white text-black border-neutral-300 hover:border-black'
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
+        <div className="max-w-[1700px] mx-auto w-full px-4 sm:px-10 pb-6 sm:pb-8 space-y-4 border-b border-neutral-200 animate-fade-in text-[11px] sm:text-xs font-bold tracking-[0.15em]">
+          <div>
+            <span className="block text-[10px] uppercase font-mono text-neutral-400 mb-2 font-bold">НАЯВНІСТЬ:</span>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { label: 'ВСІ', val: 'ALL' },
+                { label: 'В НАЯВНОСТІ', val: 'IN_STOCK' },
+                { label: 'ПІД ЗАМОВЛЕННЯ', val: 'PREORDER' },
+              ].map(cat => (
+                <button
+                  key={cat.val}
+                  onClick={() => setActiveCategory(cat.val)}
+                  className={`px-3.5 sm:px-4 py-2 border transition-colors cursor-pointer ${
+                    activeCategory === cat.val
+                      ? 'bg-black text-white border-black'
+                      : 'bg-white text-black border-neutral-300 hover:border-black'
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <span className="block text-[10px] uppercase font-mono text-neutral-400 mb-2 font-bold">ТИП ОДЯГУ:</span>
+            <div className="flex flex-wrap gap-2">
+              {CLOTHING_TYPES.map(ct => (
+                <Link
+                  key={ct.id}
+                  href={ct.id === 'all' ? '/catalog' : `/catalog?type=${ct.id}`}
+                  className={`px-3 py-1.5 border text-[10px] uppercase transition-colors ${
+                    typeParam === ct.id || (!typeParam && ct.id === 'all')
+                      ? 'bg-black text-white border-black'
+                      : 'bg-neutral-50 text-neutral-700 border-neutral-200 hover:border-black'
+                  }`}
+                >
+                  {ct.label}
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 

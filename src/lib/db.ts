@@ -62,18 +62,24 @@ export const getProducts = async (): Promise<ProductType[]> => {
     try {
       const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
       if (!error && data && data.length > 0) {
-        const formatted: ProductType[] = data.map(item => ({
-          id: item.id,
-          name: item.name,
-          price: Number(item.price),
-          originalPrice: item.original_price ? Number(item.original_price) : undefined,
-          category: item.category,
-          description: item.description || '',
-          images: Array.isArray(item.images) ? item.images : (typeof item.images === 'string' ? JSON.parse(item.images) : [item.images]),
-          sizes: Array.isArray(item.sizes) ? item.sizes : (typeof item.sizes === 'string' ? item.sizes.split(',') : ['S', 'M', 'L']),
-          inStock: item.in_stock !== false,
-          isFeatured: Boolean(item.is_featured)
-        }));
+        const localMap = new Map(readLocalProducts().map(p => [p.id, p]));
+        const formatted: ProductType[] = data.map(item => {
+          const local = localMap.get(item.id);
+          return {
+            id: item.id,
+            name: item.name,
+            price: Number(item.price),
+            originalPrice: item.original_price ? Number(item.original_price) : undefined,
+            category: item.category,
+            brand: item.brand || local?.brand || undefined,
+            clothingType: item.clothing_type || item.clothingType || local?.clothingType || undefined,
+            description: item.description || '',
+            images: Array.isArray(item.images) ? item.images : (typeof item.images === 'string' ? JSON.parse(item.images) : [item.images]),
+            sizes: Array.isArray(item.sizes) ? item.sizes : (typeof item.sizes === 'string' ? item.sizes.split(',') : ['S', 'M', 'L']),
+            inStock: item.in_stock !== false,
+            isFeatured: Boolean(item.is_featured)
+          };
+        });
         writeLocalProducts(formatted);
         return formatted;
       }
@@ -98,23 +104,29 @@ export const createProduct = async (productData: Omit<ProductType, 'id'>): Promi
 
   if (supabase) {
     try {
-      const { data, error } = await supabase.from('products').insert([
-        {
-          id: newId,
-          name: productData.name,
-          price: productData.price,
-          original_price: productData.originalPrice || null,
-          category: productData.category,
-          description: productData.description || '',
-          images: productData.images,
-          sizes: productData.sizes,
-          in_stock: productData.inStock,
-          is_featured: productData.isFeatured
-        }
-      ]).select().single();
+      // First attempt with all fields
+      const payload: Record<string, any> = {
+        id: newId,
+        name: productData.name,
+        price: productData.price,
+        original_price: productData.originalPrice || null,
+        category: productData.category,
+        description: productData.description || '',
+        images: productData.images,
+        sizes: productData.sizes,
+        in_stock: productData.inStock,
+        is_featured: productData.isFeatured
+      };
+      if (productData.brand) payload.brand = productData.brand;
+      if (productData.clothingType) payload.clothing_type = productData.clothingType;
+
+      const { data, error } = await supabase.from('products').insert([payload]).select().single();
 
       if (error) {
-        console.error('Supabase product insert error:', error.message);
+        // Fallback without dynamic columns if DB schema doesn't have them
+        delete payload.brand;
+        delete payload.clothing_type;
+        await supabase.from('products').insert([payload]);
       } else if (data) {
         console.log('Product created in Supabase DB:', data.id);
       }
@@ -134,7 +146,7 @@ export const createProduct = async (productData: Omit<ProductType, 'id'>): Promi
 export const updateProduct = async (id: string, productData: Partial<ProductType>): Promise<ProductType | null> => {
   if (supabase) {
     try {
-      await supabase.from('products').update({
+      const payload: Record<string, any> = {
         name: productData.name,
         price: productData.price,
         original_price: productData.originalPrice,
@@ -144,7 +156,16 @@ export const updateProduct = async (id: string, productData: Partial<ProductType
         sizes: productData.sizes,
         in_stock: productData.inStock,
         is_featured: productData.isFeatured
-      }).eq('id', id);
+      };
+      if (productData.brand !== undefined) payload.brand = productData.brand;
+      if (productData.clothingType !== undefined) payload.clothing_type = productData.clothingType;
+
+      const { error } = await supabase.from('products').update(payload).eq('id', id);
+      if (error) {
+        delete payload.brand;
+        delete payload.clothing_type;
+        await supabase.from('products').update(payload).eq('id', id);
+      }
     } catch (err) {
       console.error('Supabase update error:', err);
     }

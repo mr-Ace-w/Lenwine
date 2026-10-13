@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Menu, X, Search, ShoppingBag } from 'lucide-react';
+import { Menu, X, Search, ShoppingBag, ChevronLeft } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { CLOTHING_TYPES, DEFAULT_BRANDS } from '@/lib/products-data';
 
 interface HeaderProps {
   onSearchClick?: () => void;
@@ -13,6 +14,14 @@ interface HeaderProps {
 
 export default function Header({ onSearchClick }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [menuView, setMenuView] = useState<'main' | 'subcategories' | 'brands'>('main');
+  const [subcategoryScope, setSubcategoryScope] = useState<{
+    title: string;
+    scope: 'ALL' | 'PREORDER' | 'IN_STOCK';
+  }>({ title: 'ВСІ ТОВАРИ', scope: 'ALL' });
+  const [brandSearch, setBrandSearch] = useState('');
+  const [allBrands, setAllBrands] = useState<string[]>(DEFAULT_BRANDS);
+
   const pathname = usePathname();
   const { totalCount, setIsCartOpen } = useCart();
 
@@ -21,12 +30,37 @@ export default function Header({ onSearchClick }: HeaderProps) {
   const logoSrc = isHomePage ? '/logo-white.png' : '/logo-black.png';
   const textColor = isHomePage ? 'text-white' : 'text-black';
 
-  const menuItems = [
-    { label: 'ALL PRODUCTS', href: '/catalog' },
-    { label: 'BRANDS', href: '/catalog?category=BRANDS' },
-    { label: 'ПІД ЗАМОВЛЕННЯ', href: '/catalog?category=PREORDER' },
-    { label: 'В НАЯВНОСТІ', href: '/catalog?category=IN_STOCK' },
-  ];
+  // Handle drawer open / scroll lock / dynamic brands fetch
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+      fetch('/api/brands')
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data) && data.length > 0) {
+            setAllBrands(data);
+          }
+        })
+        .catch(() => {});
+    } else {
+      document.body.style.overflow = '';
+      // Reset view after transition
+      const timer = setTimeout(() => {
+        setMenuView('main');
+        setBrandSearch('');
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMenuOpen]);
+
+  const filteredBrands = useMemo(() => {
+    const q = brandSearch.trim().toLowerCase();
+    if (!q) return allBrands;
+    return allBrands.filter(b => b.toLowerCase().includes(q));
+  }, [allBrands, brandSearch]);
 
   return (
     <>
@@ -54,7 +88,7 @@ export default function Header({ onSearchClick }: HeaderProps) {
             <button
               onClick={onSearchClick}
               aria-label="Search"
-              className="p-1 hover:opacity-70 transition-opacity"
+              className="p-1 hover:opacity-70 transition-opacity cursor-pointer"
             >
               <Search className="w-5 h-5 sm:w-6 sm:h-6 stroke-[1.8]" />
             </button>
@@ -63,7 +97,7 @@ export default function Header({ onSearchClick }: HeaderProps) {
             <button
               onClick={() => setIsCartOpen(true)}
               aria-label="Cart"
-              className="relative p-1 hover:opacity-70 transition-opacity flex items-center space-x-1"
+              className="relative p-1 hover:opacity-70 transition-opacity flex items-center space-x-1 cursor-pointer"
             >
               <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6 stroke-[1.8]" />
               {totalCount > 0 && (
@@ -73,9 +107,12 @@ export default function Header({ onSearchClick }: HeaderProps) {
 
             {/* Burger Menu Trigger */}
             <button
-              onClick={() => setIsMenuOpen(true)}
+              onClick={() => {
+                setMenuView('main');
+                setIsMenuOpen(true);
+              }}
               aria-label="Open Menu"
-              className="p-1 hover:opacity-70 transition-opacity flex items-center justify-center"
+              className="p-1 hover:opacity-70 transition-opacity flex items-center justify-center cursor-pointer"
             >
               <Menu className="w-6 h-6 sm:w-8 sm:h-8 stroke-[1.8]" />
             </button>
@@ -83,66 +120,206 @@ export default function Header({ onSearchClick }: HeaderProps) {
         </div>
       </header>
 
-      {/* Sleek Slide-out Navigation Drawer (Burger Menu) */}
-      {isMenuOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end">
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
-            onClick={() => setIsMenuOpen(false)}
-          />
+      {/* Smooth Animated Navigation Drawer (Burger Menu) */}
+      <div className={`fixed inset-0 z-50 transition-visibility duration-300 ${isMenuOpen ? 'visible pointer-events-auto' : 'invisible pointer-events-none'}`}>
+        {/* Backdrop */}
+        <div
+          className={`fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-300 ease-in-out ${
+            isMenuOpen ? 'opacity-100' : 'opacity-0'
+          }`}
+          onClick={() => setIsMenuOpen(false)}
+        />
 
-          {/* Menu Drawer Content */}
-          <div className="relative w-full max-w-[320px] sm:max-w-sm bg-white text-black h-full p-6 sm:p-12 flex flex-col justify-between z-10 animate-fade-in shadow-2xl">
-            <div>
-              {/* Drawer Top Header */}
-              <div className="flex items-center justify-between pb-6 sm:pb-8 border-b border-neutral-200">
-                <div className="relative h-6 sm:h-7 w-32 sm:w-36">
-                  <Image src="/logo-black.png" alt="LENWINE" fill className="object-contain object-left" />
-                </div>
-                <button
-                  onClick={() => setIsMenuOpen(false)}
-                  className="p-1.5 text-neutral-400 hover:text-black transition-colors"
-                >
-                  <X className="w-6 h-6 stroke-[1.8]" />
-                </button>
+        {/* Drawer Panel */}
+        <div
+          className={`fixed top-0 right-0 bottom-0 w-full max-w-[360px] sm:max-w-md bg-white text-black h-full shadow-2xl flex flex-col justify-between transform transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+            isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
+        >
+          {/* Top Bar */}
+          <div className="flex items-center justify-between px-6 sm:px-10 pt-6 sm:pt-8 pb-4 border-b border-neutral-100">
+            {menuView === 'main' ? (
+              <div className="relative h-6 sm:h-7 w-32 sm:w-36">
+                <Image src="/logo-black.png" alt="LENWINE" fill className="object-contain object-left" />
               </div>
-
-              {/* Drawer Links */}
-              <div className="mt-10 space-y-8">
-                {menuItems.map(item => (
-                  <Link
-                    key={item.label}
-                    href={item.href}
-                    onClick={() => setIsMenuOpen(false)}
-                    className="block text-left font-bold text-xl sm:text-2xl tracking-[0.18em] uppercase text-neutral-900 hover:text-black hover:pl-2 transition-all duration-200 border-b border-neutral-100 pb-4"
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            {/* Drawer Bottom Info */}
-            <div className="border-t border-neutral-200 pt-8 space-y-4">
+            ) : menuView === 'subcategories' ? (
               <button
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  if (onSearchClick) onSearchClick();
-                }}
-                className="flex items-center space-x-3 w-full p-4 bg-neutral-100 font-bold text-xs uppercase tracking-[0.2em]"
+                onClick={() => setMenuView('main')}
+                className="flex items-center space-x-2 text-base sm:text-lg font-black tracking-[0.04em] uppercase text-black hover:opacity-60 transition-opacity cursor-pointer -ml-1"
               >
-                <Search className="w-4 h-4" />
-                <span>SEARCH CATALOG</span>
+                <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
+                <span>{subcategoryScope.title}</span>
               </button>
+            ) : (
+              <button
+                onClick={() => setMenuView('main')}
+                className="flex items-center space-x-2 text-base sm:text-lg font-black tracking-[0.04em] uppercase text-black hover:opacity-60 transition-opacity cursor-pointer -ml-1"
+              >
+                <ChevronLeft className="w-5 h-5 stroke-[2.5]" />
+                <span>БРЕНДИ</span>
+              </button>
+            )}
 
-              <div className="text-[10px] font-mono uppercase tracking-[0.3em] text-neutral-400 text-center pt-2">
-                © LENWINE HIGH FASHION COUTURE
+            <button
+              onClick={() => setIsMenuOpen(false)}
+              className="p-1.5 text-neutral-400 hover:text-black transition-colors cursor-pointer"
+              aria-label="Закрити меню"
+            >
+              <X className="w-6 h-6 stroke-[1.8]" />
+            </button>
+          </div>
+
+          {/* Drawer Body */}
+          <div className="flex-1 overflow-y-auto px-6 sm:px-10 py-6 sm:py-8">
+            {/* VIEW 1: MAIN MENU (Screenshot 1) */}
+            {menuView === 'main' && (
+              <div className="space-y-6 sm:space-y-7 animate-fade-in">
+                <Link
+                  href="/"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="block text-xl sm:text-2xl font-black tracking-[0.04em] uppercase text-black hover:opacity-60 transition-opacity"
+                >
+                  ГОЛОВНА
+                </Link>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSubcategoryScope({ title: 'ВСІ ТОВАРИ', scope: 'ALL' });
+                    setMenuView('subcategories');
+                  }}
+                  className="block text-left w-full text-xl sm:text-2xl font-black tracking-[0.04em] uppercase text-black hover:opacity-60 transition-opacity cursor-pointer"
+                >
+                  ВСІ ТОВАРИ
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSubcategoryScope({ title: 'ПІД ЗАМОВЛЕННЯ', scope: 'PREORDER' });
+                    setMenuView('subcategories');
+                  }}
+                  className="block text-left w-full text-xl sm:text-2xl font-black tracking-[0.04em] uppercase text-black hover:opacity-60 transition-opacity cursor-pointer"
+                >
+                  ПІД ЗАМОВЛЕННЯ
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSubcategoryScope({ title: 'В НАЯВНОСТІ', scope: 'IN_STOCK' });
+                    setMenuView('subcategories');
+                  }}
+                  className="block text-left w-full text-xl sm:text-2xl font-black tracking-[0.04em] uppercase text-black hover:opacity-60 transition-opacity cursor-pointer"
+                >
+                  В НАЯВНОСТІ
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setBrandSearch('');
+                    setMenuView('brands');
+                  }}
+                  className="block text-left w-full text-xl sm:text-2xl font-black tracking-[0.04em] uppercase text-black hover:opacity-60 transition-opacity cursor-pointer"
+                >
+                  БРЕНДИ
+                </button>
+
+                <a
+                  href="https://t.me/lenwine"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-xl sm:text-2xl font-black tracking-[0.04em] uppercase text-black hover:opacity-60 transition-opacity"
+                >
+                  МЕНЕДЖЕР
+                </a>
               </div>
+            )}
+
+            {/* VIEW 2: SUBCATEGORIES (Screenshot 2) */}
+            {menuView === 'subcategories' && (
+              <div className="space-y-5 sm:space-y-6 animate-fade-in">
+                {CLOTHING_TYPES.map(cat => {
+                  const href =
+                    cat.id === 'all'
+                      ? subcategoryScope.scope === 'ALL'
+                        ? '/catalog'
+                        : `/catalog?availability=${subcategoryScope.scope}`
+                      : `/catalog?type=${cat.id}${
+                          subcategoryScope.scope !== 'ALL' ? `&availability=${subcategoryScope.scope}` : ''
+                        }`;
+
+                  return (
+                    <Link
+                      key={cat.id}
+                      href={href}
+                      onClick={() => setIsMenuOpen(false)}
+                      className="block text-lg sm:text-xl font-extrabold tracking-[0.04em] uppercase text-black hover:opacity-60 transition-opacity"
+                    >
+                      {cat.label}
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* VIEW 3: BRANDS WITH REALTIME SEARCH (Screenshot 3) */}
+            {menuView === 'brands' && (
+              <div className="space-y-4 animate-fade-in flex flex-col h-full">
+                {/* Search Bar matching screenshot */}
+                <div className="relative">
+                  <Search className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <input
+                    type="text"
+                    placeholder="Пошук бренду..."
+                    value={brandSearch}
+                    onChange={e => setBrandSearch(e.target.value)}
+                    className="w-full bg-neutral-50 border border-neutral-200 rounded-md pl-10 pr-8 py-2.5 text-xs sm:text-sm font-medium text-black placeholder-neutral-400 outline-hidden focus:border-black transition-colors"
+                    autoFocus
+                  />
+                  {brandSearch && (
+                    <button
+                      onClick={() => setBrandSearch('')}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-black p-1 cursor-pointer"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+
+                {/* Alphabetical list with dividers */}
+                <div className="divide-y divide-neutral-100 flex-1 overflow-y-auto pr-1">
+                  {filteredBrands.length > 0 ? (
+                    filteredBrands.map(brand => (
+                      <Link
+                        key={brand}
+                        href={`/catalog?brand=${encodeURIComponent(brand)}`}
+                        onClick={() => setIsMenuOpen(false)}
+                        className="block py-3.5 text-xs sm:text-sm font-bold tracking-[0.08em] uppercase text-black hover:text-neutral-500 hover:pl-1 transition-all"
+                      >
+                        {brand}
+                      </Link>
+                    ))
+                  ) : (
+                    <div className="py-8 text-center text-xs font-mono text-neutral-400 uppercase">
+                      Бренд &quot;{brandSearch}&quot; не знайдено
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Drawer Bottom Info */}
+          <div className="border-t border-neutral-100 px-6 sm:px-10 py-5">
+            <div className="flex items-center justify-between text-[10px] font-mono uppercase tracking-[0.25em] text-neutral-400">
+              <span>LENWINE ARCHIVE</span>
+              <span>© 2026</span>
             </div>
           </div>
         </div>
-      )}
+      </div>
     </>
   );
 }

@@ -30,6 +30,8 @@ export async function POST(request: Request) {
       price: Number(body.price),
       originalPrice: body.originalPrice ? Number(body.originalPrice) : undefined,
       category: body.category || 'MEN',
+      brand: body.brand || undefined,
+      clothingType: body.clothingType || undefined,
       description: body.description || '',
       images: parsedImages,
       sizes: Array.isArray(body.sizes)

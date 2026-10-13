@@ -4,12 +4,68 @@ export interface ProductType {
   price: number;
   originalPrice?: number;
   category: string;
+  brand?: string;
+  clothingType?: string;
   description: string;
   images: string[];
   sizes: string[];
   inStock: boolean;
   isFeatured: boolean;
 }
+
+export const CLOTHING_TYPES = [
+  { id: 'all', label: 'ВСІ' },
+  { id: 'tshirts', label: 'ФУТБОЛКИ ТА ЛОНГСЛІВИ' },
+  { id: 'sweaters', label: 'КОФТИ ТА СВЕТРИ' },
+  { id: 'jackets', label: 'КУРТКИ ТА ВЕРХНІЙ ОДЯГ' },
+  { id: 'pants', label: 'ШТАНИ ТА ДЖИНСИ' },
+  { id: 'shorts', label: 'ШОРТИ' },
+  { id: 'shoes', label: 'ВЗУТТЯ' },
+  { id: 'headwear', label: 'КЕПКИ ТА ШАПКИ' },
+  { id: 'accessories', label: 'АКСЕСУАРИ' },
+] as const;
+
+export const DEFAULT_BRANDS: string[] = [
+  '032C',
+  '14TH ADDICTION',
+  '20471120',
+  'ACNE STUDIOS',
+  'AFFA',
+  'ALEXANDER DIGENOVA',
+  'ALICE HOLLYWOOD',
+  'ALYX',
+  'ANN DEMEULEMEESTER',
+  'BALENCIAGA',
+  'BALMAIN',
+  'BEAUTY BEAST',
+  'BIRKENSTOCK',
+  'BOTTEGA VENETA',
+  'CHROME HEARTS',
+  'COMME DES GARÇONS',
+  'DIESEL',
+  'DRIES VAN NOTEN',
+  'ENFANTS RICHES DÉPRIMÉS',
+  'GUCCI',
+  'HELMUT LANG',
+  'HYSTERIC GLAMOUR',
+  'ISSEY MIYAKE',
+  'JEAN PAUL GAULTIER',
+  'JUNYA WATANABE',
+  'KIKO KOSTADINOV',
+  'MAISON MARGIELA',
+  'MIHARA YASUHIRO',
+  'NUMBER (N)INE',
+  'OAKLEY',
+  'OFF-WHITE',
+  'PRADA',
+  'RAF SIMONS',
+  'RICK OWENS',
+  'SAINT LAURENT',
+  'UNDERCOVER',
+  'VETEMENTS',
+  'VIVIENNE WESTWOOD',
+  'YOHJI YAMAMOTO',
+];
 
 export interface OrderType {
   id: string;

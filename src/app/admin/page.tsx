@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ProductType, OrderType } from '@/lib/products-data';
+import { ProductType, OrderType, CLOTHING_TYPES, DEFAULT_BRANDS } from '@/lib/products-data';
 import { uploadImageToSupabase } from '@/lib/supabase';
 import {
   Plus,
@@ -46,6 +46,8 @@ export default function AdminPage() {
     price: '',
     originalPrice: '',
     category: 'MEN',
+    brand: '',
+    clothingType: 'tshirts',
     description: '',
     images: [] as string[],
     sizes: 'S, M, L, XL',
@@ -129,6 +131,8 @@ export default function AdminPage() {
       price: '',
       originalPrice: '',
       category: 'MEN',
+      brand: '',
+      clothingType: 'tshirts',
       description: '',
       images: [],
       sizes: 'S, M, L, XL',
@@ -146,6 +150,8 @@ export default function AdminPage() {
       price: String(prod.price),
       originalPrice: prod.originalPrice ? String(prod.originalPrice) : '',
       category: prod.category,
+      brand: prod.brand || '',
+      clothingType: prod.clothingType || 'tshirts',
       description: prod.description || '',
       images: [...prod.images],
       sizes: prod.sizes.join(', '),
@@ -264,6 +270,8 @@ export default function AdminPage() {
         price: Number(productForm.price),
         originalPrice: productForm.originalPrice ? Number(productForm.originalPrice) : undefined,
         category: productForm.category,
+        brand: productForm.brand.trim() || undefined,
+        clothingType: productForm.clothingType || undefined,
         description: productForm.description,
         images: productForm.images.length > 0 ? productForm.images : ['https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&q=80&w=1000'],
         sizes: productForm.sizes.split(',').map(s => s.trim()).filter(Boolean),
@@ -644,7 +652,16 @@ export default function AdminPage() {
                           </span>
                         </div>
                       </td>
-                      <td className="py-3 px-4 font-bold text-black">{prod.name}</td>
+                      <td className="py-3 px-4">
+                        <div className="font-bold text-black">{prod.name}</div>
+                        {(prod.brand || prod.clothingType) && (
+                          <div className="text-[10px] font-mono text-neutral-400 uppercase mt-0.5">
+                            {prod.brand ? <span className="font-bold text-neutral-700">{prod.brand}</span> : null}
+                            {prod.brand && prod.clothingType ? ' • ' : ''}
+                            {prod.clothingType ? (CLOTHING_TYPES.find(t => t.id === prod.clothingType)?.label || prod.clothingType) : ''}
+                          </div>
+                        )}
+                      </td>
                       <td className="py-3 px-4 text-neutral-500 uppercase tracking-wider font-mono text-[11px]">{prod.category}</td>
                       <td className="py-3 px-4">
                         <span className={`px-2 py-0.5 text-[9px] font-bold tracking-wider uppercase font-mono ${
@@ -788,6 +805,45 @@ export default function AdminPage() {
                   onChange={e => setProductForm({ ...productForm, name: e.target.value })}
                   className="w-full bg-white border border-neutral-300 p-2.5 focus:border-black outline-hidden font-bold"
                 />
+              </div>
+
+              {/* Brand and Clothing Type */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <div>
+                  <label className="block text-[10px] uppercase text-neutral-500 font-bold mb-1">
+                    БРЕНД (ОБЕРІТЬ АБО ВВЕДІТЬ СВІЙ НОВИЙ)
+                  </label>
+                  <input
+                    type="text"
+                    list="brand-options-list"
+                    placeholder="Наприклад: BALENCIAGA, ERD..."
+                    value={productForm.brand}
+                    onChange={e => setProductForm({ ...productForm, brand: e.target.value })}
+                    className="w-full bg-white border border-neutral-300 p-2.5 focus:border-black outline-hidden font-bold uppercase"
+                  />
+                  <datalist id="brand-options-list">
+                    {Array.from(new Set([...DEFAULT_BRANDS, ...products.map(p => p.brand).filter(Boolean)])).map(b => (
+                      <option key={b as string} value={b as string} />
+                    ))}
+                  </datalist>
+                </div>
+
+                <div>
+                  <label className="block text-[10px] uppercase text-neutral-500 font-bold mb-1">
+                    ТИП ОДЯГУ (КАТЕГОРІЯ В МЕНЮ) *
+                  </label>
+                  <select
+                    value={productForm.clothingType}
+                    onChange={e => setProductForm({ ...productForm, clothingType: e.target.value })}
+                    className="w-full bg-white border border-neutral-300 p-2.5 focus:border-black outline-hidden uppercase font-bold"
+                  >
+                    {CLOTHING_TYPES.filter(t => t.id !== 'all').map(t => (
+                      <option key={t.id} value={t.id}>
+                        {t.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">

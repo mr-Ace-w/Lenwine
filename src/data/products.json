@@ -4,6 +4,8 @@
     "name": " ERD Jeans",
     "price": 4500,
     "category": "MEN",
+    "brand": "ENFANTS RICHES DÉPRIMÉS",
+    "clothingType": "pants",
     "description": "",
     "images": [
       "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1787606844033_photo_3_2026-08-24_22-49-00.webp?alt=media&token=2ac3ab00-6352-4bd7-af28-8e7261e74de6",
@@ -16,7 +18,7 @@
       "L",
       "XL"
     ],
-    "inStock": true,
+    "inStock": false,
     "isFeatured": true
   },
   {
@@ -24,6 +26,8 @@
     "name": "Balenciaga Strike Boots",
     "price": 6000,
     "category": "MEN",
+    "brand": "BALENCIAGA",
+    "clothingType": "shoes",
     "description": "",
     "images": [
       "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1787261455722_photo_3_2026-08-20_23-24-28.webp?alt=media&token=2fa09e86-afe8-4be1-83ab-cf31dfcfc11a",
@@ -46,6 +50,8 @@
     "name": "ERD Sweater",
     "price": 3500,
     "category": "MEN",
+    "brand": "ENFANTS RICHES DÉPRIMÉS",
+    "clothingType": "sweaters",
     "description": "",
     "images": [
       "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1784923018790_photo_1_2026-07-24_21-55-16.webp?alt=media&token=7a262e7f-84cd-49f4-981f-20c02a0680cf",
@@ -67,6 +73,8 @@
     "name": "ERD Jeans",
     "price": 4000,
     "category": "MEN",
+    "brand": "ENFANTS RICHES DÉPRIMÉS",
+    "clothingType": "pants",
     "description": "",
     "images": [
       "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1781301420355_photo_1_2026-06-12_23-55-10.webp?alt=media&token=aade93df-44a3-43af-904e-f63ce2ff4a65",
@@ -88,6 +96,8 @@
     "name": "Saint Laurent Sweater",
     "price": 3000,
     "category": "MEN",
+    "brand": "SAINT LAURENT",
+    "clothingType": "sweaters",
     "description": "",
     "images": [
       "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1781471692378_photo_1_2026-06-14_23-09-57.webp?alt=media&token=fb6eb2ed-7620-48e2-8ddf-77f6d86ebf26"
@@ -97,7 +107,7 @@
       "M",
       "L"
     ],
-    "inStock": true,
+    "inStock": false,
     "isFeatured": true
   },
   {
@@ -105,8 +115,12 @@
     "name": "erd hoddie",
     "price": 2900,
     "category": "MEN",
+    "brand": "ENFANTS RICHES DÉPRIMÉS",
+    "clothingType": "sweaters",
     "description": "",
     "images": [
+      "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1790446935979_photo_10_2026-09-26_19-14-48.webp?alt=media&token=a380256d-71d0-42f1-ae13-f57b7d828723",
+      "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1790446935998_photo_9_2026-09-26_19-14-48.webp?alt=media&token=04be35a4-e8e4-4d10-ae4f-67b10a29de05",
       "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1790446935964_photo_7_2026-09-26_19-14-48.webp?alt=media&token=e0a3b783-6d9c-4853-b966-6a5298f5ef60",
       "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1790446936045_photo_8_2026-09-26_19-14-48.webp?alt=media&token=545fb3f6-6f95-436e-bec9-45a712e69e23"
     ],
