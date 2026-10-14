@@ -6,9 +6,13 @@
   --background-rgb: 255, 255, 255;
 }
 
+html {
+  background-color: #000000;
+}
+
 body {
   color: rgb(var(--foreground-rgb));
-  background-color: #ffffff;
+  background-color: #000000;
   font-family: 'Helvetica Neue', Arial, sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
@@ -61,4 +65,19 @@ body {
 
 .animate-fade-in {
   animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
 }

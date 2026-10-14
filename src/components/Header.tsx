@@ -77,12 +77,12 @@ export default function Header({ onSearchClick }: HeaderProps) {
   return (
     <>
       {/* Fixed Sticky Header - Completely Transparent Floating over content */}
-      <header className={`fixed top-0 left-0 right-0 z-40 bg-transparent ${textColor} pt-4 sm:pt-8 pb-3 sm:pb-4 pointer-events-none`}>
+      <header className={`fixed top-0 left-0 right-0 z-40 bg-transparent ${textColor} pt-[max(1rem,env(safe-area-inset-top))] sm:pt-8 pb-3 sm:pb-4 pointer-events-none`}>
         <div className="max-w-[1750px] mx-auto px-4 sm:px-12 flex items-center justify-between pointer-events-auto">
           {/* Left: Far-Left LENWINE Logo Image (White on homepage, Black on other pages) */}
           <div>
             <Link href="/" className="group flex items-center">
-              <div className="relative h-7 sm:h-10 w-36 sm:w-60 group-hover:opacity-75 transition-opacity">
+              <div className="relative h-7 sm:h-10 w-44 sm:w-60 group-hover:opacity-75 transition-opacity">
                 <Image
                   src={logoSrc}
                   alt="LENWINE"

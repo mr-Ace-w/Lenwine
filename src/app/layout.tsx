@@ -1,6 +1,13 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { CartProvider } from '@/context/CartContext';
+
+export const viewport: Viewport = {
+  themeColor: '#000000',
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+};
 
 export const metadata: Metadata = {
   title: 'LENWINE — High Fashion Couture',
@@ -26,8 +33,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="uk">
-      <body className="antialiased bg-white text-black font-sans">
+    <html lang="uk" className="bg-black">
+      <body className="antialiased bg-black text-white font-sans">
         <CartProvider>
           {children}
         </CartProvider>
