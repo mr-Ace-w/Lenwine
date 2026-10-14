@@ -57,6 +57,36 @@ function writeLocalOrders(orders: OrderType[]) {
   }
 }
 
+function parseMetaFromDescription(descriptionRaw: string | null | undefined): {
+  description: string;
+  brand?: string;
+  clothingType?: string;
+} {
+  if (!descriptionRaw) return { description: '' };
+  const metaMatch = descriptionRaw.match(/<!--meta:([\s\S]*?)-->/);
+  if (metaMatch) {
+    try {
+      const parsed = JSON.parse(metaMatch[1]);
+      const cleanDesc = descriptionRaw.replace(/<!--meta:[\s\S]*?-->/g, '').trim();
+      return {
+        description: cleanDesc,
+        brand: parsed.brand || undefined,
+        clothingType: parsed.clothingType || undefined
+      };
+    } catch {
+      // Ignore parse error
+    }
+  }
+  return { description: descriptionRaw };
+}
+
+function buildDescriptionWithMeta(description: string | undefined, brand: string | undefined, clothingType: string | undefined): string {
+  const clean = (description || '').replace(/<!--meta:[\s\S]*?-->/g, '').trim();
+  if (!brand && !clothingType) return clean;
+  const metaStr = `<!--meta:${JSON.stringify({ brand: brand || '', clothingType: clothingType || '' })}-->`;
+  return clean ? `${metaStr}\n${clean}` : metaStr;
+}
+
 export const getProducts = async (): Promise<ProductType[]> => {
   if (supabase) {
     try {
@@ -65,15 +95,36 @@ export const getProducts = async (): Promise<ProductType[]> => {
         const localMap = new Map(readLocalProducts().map(p => [p.id, p]));
         const formatted: ProductType[] = data.map(item => {
           const local = localMap.get(item.id);
+          const { description: cleanDesc, brand: metaBrand, clothingType: metaClothingType } = parseMetaFromDescription(item.description);
+
+          let detectedBrand = item.brand || metaBrand || local?.brand;
+          if (!detectedBrand && item.name) {
+            const nameUpper = item.name.toUpperCase();
+            if (nameUpper.includes('BALENCIAGA')) detectedBrand = 'BALENCIAGA';
+            else if (nameUpper.includes('ERD') || nameUpper.includes('ENFANTS')) detectedBrand = 'ENFANTS RICHES DÉPRIMÉS';
+            else if (nameUpper.includes('SAINT LAURENT')) detectedBrand = 'SAINT LAURENT';
+            else if (nameUpper.includes('HYSTERIC')) detectedBrand = 'HYSTERIC GLAMOUR';
+          }
+
+          let detectedType = item.clothing_type || item.clothingType || metaClothingType || local?.clothingType;
+          if (!detectedType && item.name) {
+            const nameLower = item.name.toLowerCase();
+            if (nameLower.includes('boot') || nameLower.includes('shoe') || nameLower.includes('sneaker')) detectedType = 'shoes';
+            else if (nameLower.includes('jean') || nameLower.includes('pant')) detectedType = 'pants';
+            else if (nameLower.includes('jacket') || nameLower.includes('coat')) detectedType = 'jackets';
+            else if (nameLower.includes('sweater') || nameLower.includes('hoodie') || nameLower.includes('hoddie')) detectedType = 'sweaters';
+            else if (nameLower.includes('tee') || nameLower.includes('shirt')) detectedType = 'tshirts';
+          }
+
           return {
             id: item.id,
             name: item.name,
             price: Number(item.price),
             originalPrice: item.original_price ? Number(item.original_price) : undefined,
             category: item.category,
-            brand: item.brand || local?.brand || undefined,
-            clothingType: item.clothing_type || item.clothingType || local?.clothingType || undefined,
-            description: item.description || '',
+            brand: detectedBrand || undefined,
+            clothingType: detectedType || undefined,
+            description: cleanDesc,
             images: Array.isArray(item.images) ? item.images : (typeof item.images === 'string' ? JSON.parse(item.images) : [item.images]),
             sizes: Array.isArray(item.sizes) ? item.sizes : (typeof item.sizes === 'string' ? item.sizes.split(',') : ['S', 'M', 'L']),
             inStock: item.in_stock !== false,
@@ -104,29 +155,29 @@ export const createProduct = async (productData: Omit<ProductType, 'id'>): Promi
 
   if (supabase) {
     try {
-      // First attempt with all fields
+      const dbDescription = buildDescriptionWithMeta(
+        productData.description,
+        productData.brand,
+        productData.clothingType
+      );
+
       const payload: Record<string, any> = {
         id: newId,
         name: productData.name,
         price: productData.price,
         original_price: productData.originalPrice || null,
         category: productData.category,
-        description: productData.description || '',
+        description: dbDescription,
         images: productData.images,
         sizes: productData.sizes,
         in_stock: productData.inStock,
         is_featured: productData.isFeatured
       };
-      if (productData.brand) payload.brand = productData.brand;
-      if (productData.clothingType) payload.clothing_type = productData.clothingType;
 
       const { data, error } = await supabase.from('products').insert([payload]).select().single();
 
       if (error) {
-        // Fallback without dynamic columns if DB schema doesn't have them
-        delete payload.brand;
-        delete payload.clothing_type;
-        await supabase.from('products').insert([payload]);
+        console.error('Supabase product insert error:', error.message);
       } else if (data) {
         console.log('Product created in Supabase DB:', data.id);
       }
@@ -144,40 +195,89 @@ export const createProduct = async (productData: Omit<ProductType, 'id'>): Promi
 };
 
 export const updateProduct = async (id: string, productData: Partial<ProductType>): Promise<ProductType | null> => {
+  let updatedProduct: ProductType | null = null;
+
+  // 1. First update in Supabase
   if (supabase) {
     try {
-      const payload: Record<string, any> = {
-        name: productData.name,
-        price: productData.price,
-        original_price: productData.originalPrice,
-        category: productData.category,
-        description: productData.description,
-        images: productData.images,
-        sizes: productData.sizes,
-        in_stock: productData.inStock,
-        is_featured: productData.isFeatured
-      };
-      if (productData.brand !== undefined) payload.brand = productData.brand;
-      if (productData.clothingType !== undefined) payload.clothing_type = productData.clothingType;
+      const dbDescription = buildDescriptionWithMeta(
+        productData.description,
+        productData.brand,
+        productData.clothingType
+      );
 
-      const { error } = await supabase.from('products').update(payload).eq('id', id);
-      if (error) {
-        delete payload.brand;
-        delete payload.clothing_type;
-        await supabase.from('products').update(payload).eq('id', id);
+      const payload: Record<string, any> = {};
+      if (productData.name !== undefined) payload.name = productData.name;
+      if (productData.price !== undefined) payload.price = productData.price;
+      if (productData.originalPrice !== undefined) payload.original_price = productData.originalPrice;
+      if (productData.category !== undefined) payload.category = productData.category;
+      if (productData.description !== undefined || productData.brand !== undefined || productData.clothingType !== undefined) {
+        payload.description = dbDescription;
+      }
+      if (productData.images !== undefined) payload.images = productData.images;
+      if (productData.sizes !== undefined) payload.sizes = productData.sizes;
+      if (productData.inStock !== undefined) payload.in_stock = productData.inStock;
+      if (productData.isFeatured !== undefined) payload.is_featured = productData.isFeatured;
+
+      const { data, error } = await supabase
+        .from('products')
+        .update(payload)
+        .eq('id', id)
+        .select()
+        .maybeSingle();
+
+      if (!error && data) {
+        const { description: cleanDesc, brand: metaBrand, clothingType: metaClothingType } = parseMetaFromDescription(data.description);
+        updatedProduct = {
+          id: data.id,
+          name: data.name,
+          price: Number(data.price),
+          originalPrice: data.original_price ? Number(data.original_price) : undefined,
+          category: data.category,
+          brand: metaBrand || productData.brand,
+          clothingType: metaClothingType || productData.clothingType,
+          description: cleanDesc,
+          images: Array.isArray(data.images) ? data.images : (typeof data.images === 'string' ? JSON.parse(data.images) : [data.images]),
+          sizes: Array.isArray(data.sizes) ? data.sizes : (typeof data.sizes === 'string' ? data.sizes.split(',') : ['S', 'M', 'L']),
+          inStock: data.in_stock !== false,
+          isFeatured: Boolean(data.is_featured)
+        };
+      } else if (error) {
+        console.error('Supabase update failed:', error.message);
       }
     } catch (err) {
-      console.error('Supabase update error:', err);
+      console.error('Supabase update exception:', err);
     }
   }
 
-  const current = readLocalProducts();
-  const index = current.findIndex(p => p.id === id);
-  if (index === -1) return null;
-  current[index] = { ...current[index], ...productData };
-  writeLocalProducts(current);
+  // 2. Also update local disk storage if possible
+  try {
+    const current = readLocalProducts();
+    const index = current.findIndex(p => p.id === id);
+    if (index !== -1) {
+      current[index] = { ...current[index], ...productData };
+      writeLocalProducts(current);
+      if (!updatedProduct) updatedProduct = current[index];
+    } else if (updatedProduct) {
+      writeLocalProducts([updatedProduct, ...current]);
+    }
+  } catch (err) {
+    console.error('Local update error:', err);
+  }
 
-  return current[index];
+  // 3. If updated in Supabase or local, return immediately
+  if (updatedProduct) {
+    return updatedProduct;
+  }
+
+  // 4. Fallback: query all products to see if it exists
+  const all = await getProducts();
+  const existing = all.find(p => p.id === id);
+  if (existing) {
+    return { ...existing, ...productData };
+  }
+
+  return null;
 };
 
 export const deleteProduct = async (id: string): Promise<boolean> => {
@@ -200,7 +300,7 @@ export const deleteProduct = async (id: string): Promise<boolean> => {
 };
 
 export const reorderProducts = async (orderedIds: string[]): Promise<ProductType[]> => {
-  const current = readLocalProducts();
+  const current = await getProducts();
   const idMap = new Map(current.map(p => [p.id, p]));
   const reordered: ProductType[] = [];
 

@@ -1,5 +1,51 @@
 [
   {
+    "id": "len-54255",
+    "name": "Balenciaga Alaska Bootsss",
+    "price": 6500,
+    "category": "MEN",
+    "brand": "BALENCIAGA",
+    "clothingType": "shoes",
+    "description": "",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1787782182674_yGV99.webp?alt=media&token=8b5b40d7-2617-43a3-bc85-1ffa66844f87"
+    ],
+    "sizes": [
+      "38",
+      "39",
+      "40",
+      "41",
+      "42",
+      "43"
+    ],
+    "inStock": false,
+    "isFeatured": true
+  },
+  {
+    "id": "len-22965",
+    "name": "Hysteric Glamour Jacket",
+    "price": 7000,
+    "category": "MEN",
+    "brand": "HYSTERIC GLAMOUR",
+    "clothingType": "jackets",
+    "description": "",
+    "images": [
+      "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1789645315445_ZqAf8.webp?alt=media&token=353e056f-b564-4d00-89c2-212ec488e990",
+      "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1789645310286_photo_2_2026-09-17_13-41-38.webp?alt=media&token=d9326d90-6b03-4fbc-b04c-e8e1f3cdde58",
+      "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1789645310324_photo_1_2026-09-17_13-41-38.webp?alt=media&token=fc94a6f0-99b4-4e9b-91e0-eebad7aa87fa",
+      "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1789645310203_photo_4_2026-09-17_13-41-38.webp?alt=media&token=33c82207-3d99-4037-b11a-c2981e1d2ec4",
+      "https://firebasestorage.googleapis.com/v0/b/deaddropua-com.firebasestorage.app/o/products%2F1789645310247_photo_3_2026-09-17_13-41-38.webp?alt=media&token=e2538720-5c62-478a-a285-21565fc37e5e"
+    ],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL"
+    ],
+    "inStock": true,
+    "isFeatured": true
+  },
+  {
     "id": "len-56280",
     "name": " ERD Jeans",
     "price": 4500,
