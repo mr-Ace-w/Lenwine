@@ -18,31 +18,31 @@ export default function CartDrawer({ onOpenCheckout }: CartDrawerProps) {
     <div className="fixed inset-0 z-50 flex justify-end">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/80 backdrop-blur-xs transition-opacity"
+        className="fixed inset-0 bg-black/40 backdrop-blur-md transition-opacity duration-300"
         onClick={() => setIsCartOpen(false)}
       />
 
-      {/* Drawer content */}
-      <div className="relative w-full max-w-md bg-black text-white border-l border-white/15 h-full shadow-2xl flex flex-col justify-between z-10 animate-fade-in">
+      {/* Drawer content (НАЙСИЛЬНІШИЙ blur + shadow-blur, no borders) */}
+      <div className="glass-panel-ultra relative w-full max-w-md text-white h-full flex flex-col justify-between z-10 animate-fade-in">
         {/* Header */}
-        <div className="p-6 border-b border-white/10 flex items-center justify-between">
+        <div className="p-6 border-b border-white/[0.06] flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <ShoppingBag className="w-5 h-5 text-white" />
             <h2 className="font-erd-logo text-base tracking-[0.2em] uppercase">КОШИК ({cart.length})</h2>
           </div>
           <button
             onClick={() => setIsCartOpen(false)}
-            className="p-1 text-neutral-400 hover:text-white transition-opacity"
+            className="p-1 text-neutral-400 hover:text-white transition-opacity cursor-pointer"
           >
             <X className="w-6 h-6 stroke-[1.5]" />
           </button>
         </div>
 
         {/* Item List */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 divide-y divide-white/10">
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 divide-y divide-white/[0.06]">
           {cart.length === 0 ? (
             <div className="text-center py-20 space-y-4">
-              <ShoppingBag className="w-12 h-12 text-neutral-700 mx-auto stroke-[1]" />
+              <ShoppingBag className="w-12 h-12 text-neutral-600 mx-auto stroke-[1]" />
               <p className="text-xs uppercase tracking-[0.3em] font-mono text-neutral-500">
                 КОШИК ПОРОЖНІЙ
               </p>
@@ -51,7 +51,7 @@ export default function CartDrawer({ onOpenCheckout }: CartDrawerProps) {
             cart.map((item, idx) => (
               <div key={`${item.product.id}-${item.selectedSize}-${idx}`} className="pt-6 first:pt-0 flex space-x-4">
                 {/* Image */}
-                <div className="relative w-20 h-28 bg-neutral-900 border border-white/10 flex-shrink-0">
+                <div className="relative w-20 h-28 bg-neutral-900/60 border border-white/10 flex-shrink-0">
                   <Image
                     src={item.product.images[0]}
                     alt={item.product.name}
@@ -86,17 +86,17 @@ export default function CartDrawer({ onOpenCheckout }: CartDrawerProps) {
 
                   {/* Quantity controls */}
                   <div className="flex items-center space-x-3 mt-3">
-                    <div className="flex items-center border border-white/20 bg-neutral-900">
+                    <div className="flex items-center border border-white/10 bg-white/5 rounded-xs">
                       <button
                         onClick={() => updateQuantity(item.product.id, item.selectedSize, -1)}
-                        className="px-2 py-1 hover:bg-neutral-800 text-neutral-300"
+                        className="px-2 py-1 hover:bg-white/10 text-neutral-300 cursor-pointer"
                       >
                         <Minus className="w-3 h-3" />
                       </button>
                       <span className="px-3 text-xs font-mono font-bold">{item.quantity}</span>
                       <button
                         onClick={() => updateQuantity(item.product.id, item.selectedSize, 1)}
-                        className="px-2 py-1 hover:bg-neutral-800 text-neutral-300"
+                        className="px-2 py-1 hover:bg-white/10 text-neutral-300 cursor-pointer"
                       >
                         <Plus className="w-3 h-3" />
                       </button>
@@ -110,7 +110,7 @@ export default function CartDrawer({ onOpenCheckout }: CartDrawerProps) {
 
         {/* Footer / Summary */}
         {cart.length > 0 && (
-          <div className="p-6 border-t border-white/10 bg-neutral-950 space-y-4">
+          <div className="p-6 border-t border-white/[0.06] bg-black/40 backdrop-blur-xl space-y-4">
             <div className="flex items-center justify-between text-sm font-mono">
               <span className="text-xs uppercase tracking-[0.25em] text-neutral-400 font-medium">
                 СУМА:
@@ -129,7 +129,7 @@ export default function CartDrawer({ onOpenCheckout }: CartDrawerProps) {
                 setIsCartOpen(false);
                 onOpenCheckout();
               }}
-              className="w-full bg-white text-black py-4 text-xs font-bold tracking-[0.25em] uppercase flex items-center justify-center space-x-2 hover:bg-neutral-200 transition-colors shadow-xl"
+              className="w-full bg-white text-black py-4 text-xs font-bold tracking-[0.25em] uppercase flex items-center justify-center space-x-2 hover:bg-neutral-200 transition-colors shadow-2xl cursor-pointer"
             >
               <span>ОФОРМИТИ ЗАМОВЛЕННЯ</span>
               <ArrowRight className="w-4 h-4" />

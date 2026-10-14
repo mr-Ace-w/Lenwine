@@ -25,6 +25,11 @@ export const metadata: Metadata = {
     shortcut: '/favicon.ico',
   },
   manifest: '/site.webmanifest',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'LENWINE',
+  },
 };
 
 export default function RootLayout({

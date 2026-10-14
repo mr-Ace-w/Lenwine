@@ -314,19 +314,19 @@ function CatalogContent() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-white border-t border-neutral-200 py-8 sm:py-10 px-4 sm:px-10">
-        <div className="max-w-[1700px] mx-auto flex flex-col sm:flex-row items-center justify-between text-xs font-bold tracking-[0.18em] uppercase text-neutral-500 gap-6">
+      <footer className="bg-white border-t border-neutral-100 py-8 px-4 sm:px-10 mt-auto">
+        <div className="max-w-[1700px] mx-auto flex flex-col sm:flex-row items-center justify-between text-[10px] sm:text-[11px] font-mono tracking-[0.2em] uppercase text-neutral-400 gap-4">
           <div className="flex items-center space-x-4">
-            <div className="relative h-5 w-28">
-              <img src="/logo-black.png" alt="LENWINE" className="h-5 w-auto object-contain" />
+            <div className="relative h-4 w-24 opacity-40 hover:opacity-80 transition-opacity">
+              <img src="/logo-black.png" alt="LENWINE" className="h-4 w-auto object-contain" />
             </div>
-            <span>© 2026 ARCHIVE</span>
+            <span className="text-neutral-400">© 2026 ARCHIVE</span>
           </div>
 
-          <div className="flex space-x-8">
-            <button onClick={() => setActiveCategory('ALL')} className="hover:text-black">ALL PRODUCTS</button>
-            <a href="/admin" className="hover:text-black text-black font-extrabold">ADMINISTRATION</a>
-            <button onClick={() => setIsSearchOpen(true)} className="hover:text-black">SEARCH</button>
+          <div className="flex items-center space-x-6 sm:space-x-8">
+            <button onClick={() => setActiveCategory('ALL')} className="hover:text-black transition-colors cursor-pointer">ALL PRODUCTS</button>
+            <a href="/admin" className="hover:text-black text-neutral-500 transition-colors">ADMIN</a>
+            <button onClick={() => setIsSearchOpen(true)} className="hover:text-black transition-colors cursor-pointer">SEARCH</button>
           </div>
         </div>
       </footer>

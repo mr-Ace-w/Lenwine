@@ -26,9 +26,9 @@ export default function SearchModal({ isOpen, onClose, products, onSelectProduct
     : [];
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-black/95 backdrop-blur-xl text-white animate-fade-in">
+    <div className="glass-modal-ultra fixed inset-0 z-50 flex flex-col text-white animate-fade-in">
       {/* Top Header Bar */}
-      <div className="max-w-4xl mx-auto w-full px-6 pt-12 pb-6 flex items-center justify-between border-b border-white/10">
+      <div className="max-w-4xl mx-auto w-full px-6 pt-12 pb-6 flex items-center justify-between border-b border-white/[0.06]">
         <div className="flex-1 flex items-center space-x-4">
           <Search className="w-6 h-6 text-neutral-400 stroke-[1.5]" />
           <input
@@ -37,10 +37,10 @@ export default function SearchModal({ isOpen, onClose, products, onSelectProduct
             placeholder="ПОШУК ТОВАРІВ LENWINE..."
             value={query}
             onChange={e => setQuery(e.target.value)}
-            className="w-full bg-transparent text-xl font-erd-heading tracking-[0.2em] outline-hidden uppercase placeholder-neutral-600 text-white"
+            className="w-full bg-transparent text-xl font-erd-heading tracking-[0.2em] outline-hidden uppercase placeholder-neutral-500 text-white"
           />
         </div>
-        <button onClick={onClose} className="p-2 text-neutral-400 hover:text-white">
+        <button onClick={onClose} className="p-2 text-neutral-400 hover:text-white cursor-pointer">
           <X className="w-7 h-7 stroke-[1.5]" />
         </button>
       </div>
@@ -55,7 +55,7 @@ export default function SearchModal({ isOpen, onClose, products, onSelectProduct
                 <button
                   key={term}
                   onClick={() => setQuery(term)}
-                  className="px-4 py-2 border border-white/20 bg-neutral-900 hover:bg-white hover:text-black transition-colors"
+                  className="px-4 py-2 bg-white/10 hover:bg-white hover:text-black text-white font-mono transition-colors rounded-sm cursor-pointer"
                 >
                   {term}
                 </button>
@@ -75,9 +75,9 @@ export default function SearchModal({ isOpen, onClose, products, onSelectProduct
                   onSelectProduct(product);
                   onClose();
                 }}
-                className="flex items-center space-x-4 p-3 bg-neutral-950 border border-white/10 hover:border-white transition-colors cursor-pointer"
+                className="flex items-center space-x-4 p-3 bg-black/40 backdrop-blur-md border border-white/[0.08] hover:border-white/40 transition-colors cursor-pointer"
               >
-                <div className="relative w-16 h-20 bg-neutral-900 flex-shrink-0">
+                <div className="relative w-16 h-20 bg-neutral-900/80 flex-shrink-0">
                   <Image src={product.images[0]} alt={product.name} fill className="object-cover" />
                 </div>
                 <div>

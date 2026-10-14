@@ -50,11 +50,27 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #ffffff;
+  background: #000000;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #000000;
+  background: #333333;
+}
+
+/* Heavy Frosted Glass & Shadow-Blur Modals (НАЙСИЛЬНІШИЙ blur) */
+.glass-panel-ultra {
+  background: rgba(0, 0, 0, 0.65) !important;
+  backdrop-filter: blur(48px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(48px) saturate(190%) !important;
+  box-shadow: -20px 0 70px 15px rgba(0, 0, 0, 0.85) !important;
+  border: none !important;
+}
+
+.glass-modal-ultra {
+  background: rgba(0, 0, 0, 0.65) !important;
+  backdrop-filter: blur(48px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(48px) saturate(190%) !important;
+  border: none !important;
 }
 
 /* Animation utilities */
