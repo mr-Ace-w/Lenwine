@@ -64,6 +64,20 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Editorial 'Shh...' Visual Section (Full-width, unconstrained aspect ratio) */}
+      <section className="relative w-full bg-black flex items-center justify-center overflow-hidden py-4 sm:py-8 lg:py-16 select-none">
+        <div className="relative w-full aspect-[1024/447]">
+          <Image
+            src="/shh.png"
+            alt="Shh..."
+            fill
+            sizes="100vw"
+            className="w-full h-full object-contain"
+            priority
+          />
+        </div>
+      </section>
+
       {/* Understated, Subtle Editorial Footer */}
       <footer className="bg-black text-neutral-500 border-t border-white/[0.04] py-8 px-6 sm:px-12 mt-auto">
         <div className="max-w-[1750px] mx-auto space-y-6">
