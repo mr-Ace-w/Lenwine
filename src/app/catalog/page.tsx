@@ -146,6 +146,29 @@ function CatalogContent() {
     return prefix;
   };
 
+  const formatProductCount = (count: number) => {
+    const mod10 = count % 10;
+    const mod100 = count % 100;
+    let word = 'ПОЗИЦІЙ';
+    if (mod100 < 11 || mod100 > 14) {
+      if (mod10 === 1) word = 'ПОЗИЦІЯ';
+      else if (mod10 >= 2 && mod10 <= 4) word = 'ПОЗИЦІЇ';
+    }
+    return `${count} ${word}`;
+  };
+
+  const getTypeCount = (typeId: string) => {
+    if (typeId === 'all') return products.length;
+    return products.filter(p => matchesType(p, typeId)).length;
+  };
+
+  const getAvailabilityCount = (val: string) => {
+    if (val === 'ALL') return products.length;
+    if (val === 'IN_STOCK') return products.filter(p => p.inStock !== false).length;
+    if (val === 'PREORDER') return products.filter(p => p.inStock === false).length;
+    return products.length;
+  };
+
   const hasActiveFilters = Boolean(brandParam || typeParam || availabilityParam || (activeCategory !== 'ALL' && activeCategory !== ''));
 
   return (
@@ -161,7 +184,7 @@ function CatalogContent() {
           {hasActiveFilters && (
             <div className="flex items-center space-x-2 mt-2">
               <span className="text-[10px] font-mono uppercase text-neutral-400">
-                Знайдено {filteredProducts.length} позицій
+                Знайдено {formatProductCount(filteredProducts.length)}
               </span>
               <span>•</span>
               <Link
@@ -175,13 +198,19 @@ function CatalogContent() {
           )}
         </div>
 
-        <button
-          onClick={() => setShowFilters(!showFilters)}
-          className="self-start sm:self-auto bg-black text-white px-5 sm:px-6 py-2.5 sm:py-3 text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase hover:bg-neutral-800 transition-colors flex items-center space-x-2 shadow-xs cursor-pointer"
-        >
-          <SlidersHorizontal className="w-3.5 h-3.5" />
-          <span>{showFilters ? 'ЗАКРИТИ ФІЛЬТРИ' : 'ФІЛЬТРИ'}</span>
-        </button>
+        {/* Right: Filters button + count directly underneath matching screenshot */}
+        <div className="flex flex-col items-start sm:items-end gap-1.5 self-start sm:self-auto">
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="bg-black text-white px-5 sm:px-6 py-2.5 sm:py-3 text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase hover:bg-neutral-800 transition-colors flex items-center space-x-2 shadow-xs cursor-pointer"
+          >
+            <SlidersHorizontal className="w-3.5 h-3.5" />
+            <span>{showFilters ? 'ЗАКРИТИ ФІЛЬТРИ' : 'ФІЛЬТРИ'}</span>
+          </button>
+          <span className="text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.18em] text-neutral-400 font-bold pr-0.5">
+            {isLoading ? '...' : formatProductCount(filteredProducts.length)}
+          </span>
+        </div>
       </section>
 
       {/* Filter Options Bar */}
@@ -194,38 +223,50 @@ function CatalogContent() {
                 { label: 'ВСІ', val: 'ALL' },
                 { label: 'В НАЯВНОСТІ', val: 'IN_STOCK' },
                 { label: 'ПІД ЗАМОВЛЕННЯ', val: 'PREORDER' },
-              ].map(cat => (
-                <button
-                  key={cat.val}
-                  onClick={() => setActiveCategory(cat.val)}
-                  className={`px-3.5 sm:px-4 py-2 border transition-colors cursor-pointer ${
-                    activeCategory === cat.val
-                      ? 'bg-black text-white border-black'
-                      : 'bg-white text-black border-neutral-300 hover:border-black'
-                  }`}
-                >
-                  {cat.label}
-                </button>
-              ))}
+              ].map(cat => {
+                const count = getAvailabilityCount(cat.val);
+                return (
+                  <button
+                    key={cat.val}
+                    onClick={() => setActiveCategory(cat.val)}
+                    className={`px-3.5 sm:px-4 py-2 border transition-colors cursor-pointer flex items-center space-x-1.5 ${
+                      activeCategory === cat.val
+                        ? 'bg-black text-white border-black'
+                        : 'bg-white text-black border-neutral-300 hover:border-black'
+                    }`}
+                  >
+                    <span>{cat.label}</span>
+                    <span className={`text-[9px] font-mono ${activeCategory === cat.val ? 'text-neutral-400' : 'text-neutral-500'}`}>
+                      ({count})
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
           <div>
             <span className="block text-[10px] uppercase font-mono text-neutral-400 mb-2 font-bold">ТИП ОДЯГУ:</span>
             <div className="flex flex-wrap gap-2">
-              {CLOTHING_TYPES.map(ct => (
-                <Link
-                  key={ct.id}
-                  href={ct.id === 'all' ? '/catalog' : `/catalog?type=${ct.id}`}
-                  className={`px-3 py-1.5 border text-[10px] uppercase transition-colors ${
-                    typeParam === ct.id || (!typeParam && ct.id === 'all')
-                      ? 'bg-black text-white border-black'
-                      : 'bg-neutral-50 text-neutral-700 border-neutral-200 hover:border-black'
-                  }`}
-                >
-                  {ct.label}
-                </Link>
-              ))}
+              {CLOTHING_TYPES.map(ct => {
+                const count = getTypeCount(ct.id);
+                return (
+                  <Link
+                    key={ct.id}
+                    href={ct.id === 'all' ? '/catalog' : `/catalog?type=${ct.id}`}
+                    className={`px-3 py-1.5 border text-[10px] uppercase transition-colors flex items-center space-x-1.5 ${
+                      typeParam === ct.id || (!typeParam && ct.id === 'all')
+                        ? 'bg-black text-white border-black'
+                        : 'bg-neutral-50 text-neutral-700 border-neutral-200 hover:border-black'
+                    }`}
+                  >
+                    <span>{ct.label}</span>
+                    <span className={`text-[9px] font-mono ${typeParam === ct.id || (!typeParam && ct.id === 'all') ? 'text-neutral-400' : 'text-neutral-500'}`}>
+                      ({count})
+                    </span>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </div>
