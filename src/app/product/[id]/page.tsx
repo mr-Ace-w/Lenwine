@@ -14,7 +14,6 @@ import { Plus, Check, ArrowLeft, ShieldCheck, Truck, ChevronLeft, ChevronRight }
 
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const galleryRef = useRef<HTMLDivElement>(null);
   const [product, setProduct] = useState<ProductType | null>(null);
   const [allProducts, setAllProducts] = useState<ProductType[]>([]);
   const [selectedSize, setSelectedSize] = useState<string>('M');
@@ -59,27 +58,51 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     setIsCheckoutOpen(true);
   };
 
-  const handleGalleryScroll = () => {
-    if (!galleryRef.current || !product) return;
-    const { scrollLeft, clientWidth } = galleryRef.current;
-    if (clientWidth > 0) {
-      const newIdx = Math.round(scrollLeft / clientWidth);
-      if (newIdx !== activeImageIndex && newIdx >= 0 && newIdx < product.images.length) {
-        setActiveImageIndex(newIdx);
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+  const touchDeltaX = useRef<number>(0);
+  const isSwipingHorizontal = useRef<boolean | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+    touchDeltaX.current = 0;
+    isSwipingHorizontal.current = null;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) return;
+    const currentX = e.touches[0].clientX;
+    const currentY = e.touches[0].clientY;
+    const diffX = currentX - touchStartX.current;
+    const diffY = currentY - touchStartY.current;
+
+    // Detect direction on first movement > 8px
+    if (isSwipingHorizontal.current === null) {
+      if (Math.abs(diffX) > 8 || Math.abs(diffY) > 8) {
+        isSwipingHorizontal.current = Math.abs(diffX) > Math.abs(diffY);
       }
+    }
+
+    if (isSwipingHorizontal.current === true) {
+      touchDeltaX.current = diffX;
     }
   };
 
-  const scrollToIndex = (idx: number) => {
-    if (!product || idx < 0 || idx >= product.images.length) return;
-    setActiveImageIndex(idx);
-    if (galleryRef.current) {
-      const width = galleryRef.current.clientWidth;
-      galleryRef.current.scrollTo({
-        left: idx * width,
-        behavior: 'smooth'
-      });
+  const handleTouchEnd = () => {
+    if (isSwipingHorizontal.current === true && product) {
+      if (touchDeltaX.current < -35 && activeImageIndex < product.images.length - 1) {
+        // Swiped left -> next photo
+        setActiveImageIndex(prev => prev + 1);
+      } else if (touchDeltaX.current > 35 && activeImageIndex > 0) {
+        // Swiped right -> prev photo
+        setActiveImageIndex(prev => prev - 1);
+      }
     }
+    touchStartX.current = null;
+    touchStartY.current = null;
+    touchDeltaX.current = 0;
+    isSwipingHorizontal.current = null;
   };
 
   if (isLoading) {
@@ -122,24 +145,29 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         <div className="flex flex-col space-y-3 sm:space-y-4 w-full">
           {/* Main Swipeable Carousel Container */}
           <div className="relative w-full overflow-hidden bg-white sm:border sm:border-neutral-200">
-            {/* Scroll-Snap Slider */}
+            {/* Smooth Animated Image Track with pan-y touch-action for unrestricted vertical scrolling */}
             <div
-              ref={galleryRef}
-              onScroll={handleGalleryScroll}
-              className="flex w-full overflow-x-auto snap-x snap-mandatory scrollbar-none touch-pan-x"
-              style={{ scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch' }}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              style={{
+                transform: `translateX(-${activeImageIndex * 100}%)`,
+                transition: 'transform 320ms cubic-bezier(0.16, 1, 0.3, 1)',
+                touchAction: 'pan-y'
+              }}
+              className="flex w-full select-none"
             >
               {product.images.map((img, idx) => (
                 <div
                   key={idx}
-                  className="w-full flex-shrink-0 snap-center relative aspect-[3/4] sm:aspect-[4/5] flex items-center justify-center bg-white"
+                  className="w-full flex-shrink-0 relative aspect-[3/4] sm:aspect-[4/5] flex items-center justify-center bg-white"
                 >
                   <Image
                     src={img}
                     alt={`${product.name} - ${idx + 1}`}
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 45vw"
-                    className="object-contain p-0 sm:p-4"
+                    className="object-contain p-0 sm:p-4 pointer-events-none"
                     priority={idx === 0}
                   />
                 </div>
@@ -151,7 +179,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               <>
                 <button
                   type="button"
-                  onClick={() => scrollToIndex(Math.max(0, activeImageIndex - 1))}
+                  onClick={() => setActiveImageIndex(prev => Math.max(0, prev - 1))}
                   disabled={activeImageIndex === 0}
                   className="absolute left-2.5 top-1/2 -translate-y-1/2 p-2 bg-white/90 hover:bg-white text-black shadow-md border border-neutral-200 transition-opacity disabled:opacity-0 disabled:pointer-events-none cursor-pointer"
                   aria-label="Previous photo"
@@ -160,7 +188,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 </button>
                 <button
                   type="button"
-                  onClick={() => scrollToIndex(Math.min(product.images.length - 1, activeImageIndex + 1))}
+                  onClick={() => setActiveImageIndex(prev => Math.min(product.images.length - 1, prev + 1))}
                   disabled={activeImageIndex === product.images.length - 1}
                   className="absolute right-2.5 top-1/2 -translate-y-1/2 p-2 bg-white/90 hover:bg-white text-black shadow-md border border-neutral-200 transition-opacity disabled:opacity-0 disabled:pointer-events-none cursor-pointer"
                   aria-label="Next photo"
@@ -169,7 +197,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 </button>
 
                 {/* Minimalist Counter Badge */}
-                <div className="absolute bottom-3 right-3 bg-black/75 text-white font-mono text-[10px] font-bold px-2.5 py-1 tracking-widest backdrop-blur-xs shadow-xs">
+                <div className="absolute bottom-3 right-3 bg-black/75 text-white font-mono text-[10px] font-bold px-2.5 py-1 tracking-widest backdrop-blur-xs shadow-xs pointer-events-none">
                   {activeImageIndex + 1} / {product.images.length}
                 </div>
               </>
@@ -182,7 +210,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               {product.images.map((img, idx) => (
                 <button
                   key={idx}
-                  onClick={() => scrollToIndex(idx)}
+                  onClick={() => setActiveImageIndex(idx)}
                   className={`relative w-16 h-20 sm:w-20 sm:h-24 flex-shrink-0 border-2 transition-all cursor-pointer ${
                     activeImageIndex === idx
                       ? 'border-black opacity-100 shadow-xs'
