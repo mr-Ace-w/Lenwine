@@ -27,6 +27,9 @@ function CatalogContent() {
   const [showFilters, setShowFilters] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  const PAGE_SIZE = 24;
+  const [visibleCount, setVisibleCount] = useState<number>(PAGE_SIZE);
+
   useEffect(() => {
     setIsLoading(true);
     fetch('/api/products')
@@ -44,7 +47,12 @@ function CatalogContent() {
   useEffect(() => {
     const cat = searchParams.get('category') || 'ALL';
     setActiveCategory(cat);
+    setVisibleCount(PAGE_SIZE);
   }, [searchParams]);
+
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [brandParam, typeParam, availabilityParam, activeCategory]);
 
   const matchesType = (p: ProductType, type: string) => {
     if (!type || type === 'all') return true;
@@ -240,11 +248,27 @@ function CatalogContent() {
             NO POSITIONS IN THIS COLLECTION
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 sm:gap-x-10 gap-y-10 sm:gap-y-16">
-            {filteredProducts.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 sm:gap-x-10 gap-y-10 sm:gap-y-16">
+              {filteredProducts.slice(0, visibleCount).map(product => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+
+            {visibleCount < filteredProducts.length && (
+              <div className="pt-14 pb-8 flex flex-col items-center justify-center space-y-3">
+                <button
+                  onClick={() => setVisibleCount(prev => prev + PAGE_SIZE)}
+                  className="bg-black text-white hover:bg-neutral-800 transition-colors px-10 py-3.5 text-xs font-bold tracking-[0.2em] uppercase shadow-sm cursor-pointer"
+                >
+                  ПОКАЗАТИ ЩЕ ({filteredProducts.length - visibleCount})
+                </button>
+                <span className="text-[10px] font-mono uppercase text-neutral-400">
+                  Відображено {Math.min(visibleCount, filteredProducts.length)} з {filteredProducts.length} позицій
+                </span>
+              </div>
+            )}
+          </>
         )}
       </section>
 

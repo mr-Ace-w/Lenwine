@@ -12,7 +12,8 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const [selectedSize, setSelectedSize] = useState<string>(product.sizes[0] || 'M');
+  const safeSizes = Array.isArray(product.sizes) && product.sizes.length > 0 ? product.sizes : ['ONE SIZE'];
+  const [selectedSize, setSelectedSize] = useState<string>(safeSizes[0]);
   const [isHovered, setIsHovered] = useState(false);
   const [addedSuccess, setAddedSuccess] = useState(false);
   const { addToCart } = useCart();
@@ -25,7 +26,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     setTimeout(() => setAddedSuccess(false), 1800);
   };
 
-  const currentImage = isHovered && product.images[1] ? product.images[1] : product.images[0];
+  const currentImage = (isHovered && product.images?.[1]) || product.images?.[0] || 'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&q=80&w=1000';
 
   return (
     <Link
@@ -47,7 +48,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         {/* Minimal Size Selector Bar on Hover */}
         <div className="absolute bottom-2 left-2 right-2 p-2 bg-white/95 backdrop-blur-xs border border-neutral-200 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 flex flex-col space-y-1.5 shadow-md">
           <div className="flex items-center justify-center space-x-1">
-            {product.sizes.map(size => (
+            {safeSizes.map(size => (
               <button
                 key={size}
                 onClick={(e) => {

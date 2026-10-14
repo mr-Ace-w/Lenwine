@@ -21,7 +21,10 @@ import {
   KeyRound,
   ChevronUp,
   ChevronDown,
-  Pencil
+  Pencil,
+  Search,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 
 export default function AdminPage() {
@@ -36,6 +39,12 @@ export default function AdminPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Admin Products Search & Pagination
+  const [adminProductSearch, setAdminProductSearch] = useState('');
+  const [adminProductFilter, setAdminProductFilter] = useState<'ALL' | 'IN_STOCK' | 'PREORDER'>('ALL');
+  const [adminPage, setAdminPage] = useState(1);
+  const ADMIN_ITEMS_PER_PAGE = 30;
 
   // Product modal form state (Create / Edit)
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
@@ -587,57 +596,136 @@ export default function AdminPage() {
         )}
 
         {/* TAB 2: PRODUCTS */}
-        {activeTab === 'products' && (
-          <div className="space-y-6 animate-fade-in">
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-              <h3 className="font-extrabold text-sm sm:text-base tracking-[0.2em] uppercase">УПРАВЛІННЯ КАТАЛОГОМ</h3>
-              <button
-                onClick={handleOpenCreate}
-                className="bg-black text-white px-5 py-3 text-xs font-bold tracking-[0.2em] uppercase flex items-center justify-center space-x-2 hover:bg-neutral-800 transition-colors shadow-md text-center"
-              >
-                <Plus className="w-4 h-4" />
-                <span>ДОДАТИ НОВИЙ ТОВАР</span>
-              </button>
-            </div>
+        {activeTab === 'products' && (() => {
+          const inStockCount = products.filter(p => p.inStock).length;
+          const preorderCount = products.filter(p => !p.inStock).length;
 
-            {/* Products Table */}
-            <div className="bg-white border border-neutral-200 overflow-x-auto shadow-xs">
-              <table className="w-full text-left text-xs min-w-[720px]">
-                <thead className="border-b border-neutral-200 text-neutral-500 uppercase tracking-[0.2em] text-[10px] font-bold bg-neutral-50">
-                  <tr>
-                    <th className="py-3 px-4 w-16 text-center">ПОРЯДОК</th>
-                    <th className="py-3 px-4">ФОТО</th>
-                    <th className="py-3 px-4">НАЗВА</th>
-                    <th className="py-3 px-4">КАТЕГОРІЯ</th>
-                    <th className="py-3 px-4">НАЯВНІСТЬ</th>
-                    <th className="py-3 px-4">ЦІНА</th>
-                    <th className="py-3 px-4">РОЗМІРИ</th>
-                    <th className="py-3 px-4 text-right">ДІЇ</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-neutral-100">
-                  {products.map((prod, index) => (
-                    <tr key={prod.id} className="hover:bg-neutral-50 transition-colors">
-                      <td className="py-3 px-4 text-center">
-                        <div className="flex items-center justify-center space-x-1">
-                          <button
-                            onClick={() => handleMoveProduct(index, 'up')}
-                            disabled={index === 0}
-                            title="Підняти вище в каталозі"
-                            className="p-1.5 bg-neutral-100 hover:bg-black hover:text-white text-neutral-700 border border-neutral-200 disabled:opacity-20 disabled:hover:bg-neutral-100 disabled:hover:text-neutral-700 transition-colors cursor-pointer disabled:cursor-not-allowed"
-                          >
-                            <ChevronUp className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            onClick={() => handleMoveProduct(index, 'down')}
-                            disabled={index === products.length - 1}
-                            title="Опустити нижче в каталозі"
-                            className="p-1.5 bg-neutral-100 hover:bg-black hover:text-white text-neutral-700 border border-neutral-200 disabled:opacity-20 disabled:hover:bg-neutral-100 disabled:hover:text-neutral-700 transition-colors cursor-pointer disabled:cursor-not-allowed"
-                          >
-                            <ChevronDown className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </td>
+          const filteredAdminProducts = products.filter(p => {
+            if (adminProductFilter === 'IN_STOCK' && !p.inStock) return false;
+            if (adminProductFilter === 'PREORDER' && p.inStock) return false;
+            if (!adminProductSearch.trim()) return true;
+            const q = adminProductSearch.trim().toLowerCase();
+            return (
+              p.name.toLowerCase().includes(q) ||
+              (p.brand && p.brand.toLowerCase().includes(q)) ||
+              (p.clothingType && p.clothingType.toLowerCase().includes(q)) ||
+              p.id.toLowerCase().includes(q)
+            );
+          });
+
+          const totalAdminPages = Math.ceil(filteredAdminProducts.length / ADMIN_ITEMS_PER_PAGE) || 1;
+          const paginatedAdminProducts = filteredAdminProducts.slice(
+            (adminPage - 1) * ADMIN_ITEMS_PER_PAGE,
+            adminPage * ADMIN_ITEMS_PER_PAGE
+          );
+
+          return (
+            <div className="space-y-6 animate-fade-in">
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                <div>
+                  <h3 className="font-extrabold text-sm sm:text-base tracking-[0.2em] uppercase">УПРАВЛІННЯ КАТАЛОГОМ</h3>
+                  <p className="text-[10px] font-mono text-neutral-400 uppercase mt-0.5">Всього позицій у базі: {products.length}</p>
+                </div>
+                <button
+                  onClick={handleOpenCreate}
+                  className="bg-black text-white px-5 py-3 text-xs font-bold tracking-[0.2em] uppercase flex items-center justify-center space-x-2 hover:bg-neutral-800 transition-colors shadow-md text-center"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>ДОДАТИ НОВИЙ ТОВАР</span>
+                </button>
+              </div>
+
+              {/* Search and Filter Toolbar */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-neutral-50 border border-neutral-200 p-3">
+                <div className="relative flex-1">
+                  <Search className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <input
+                    type="text"
+                    placeholder="Швидкий пошук товару за назвою, брендом чи ID..."
+                    value={adminProductSearch}
+                    onChange={e => {
+                      setAdminProductSearch(e.target.value);
+                      setAdminPage(1);
+                    }}
+                    className="w-full bg-white border border-neutral-200 pl-9 pr-8 py-2 text-xs font-medium text-black placeholder-neutral-400 outline-hidden focus:border-black transition-colors"
+                  />
+                  {adminProductSearch && (
+                    <button
+                      onClick={() => {
+                        setAdminProductSearch('');
+                        setAdminPage(1);
+                      }}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-black p-1"
+                    >
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex items-center space-x-1.5 text-[10px] font-bold tracking-wider">
+                  {[
+                    { label: `ВСІ (${products.length})`, val: 'ALL' },
+                    { label: `В НАЯВНОСТІ (${inStockCount})`, val: 'IN_STOCK' },
+                    { label: `ПІД ЗАМОВЛЕННЯ (${preorderCount})`, val: 'PREORDER' }
+                  ].map(f => (
+                    <button
+                      key={f.val}
+                      onClick={() => {
+                        setAdminProductFilter(f.val as any);
+                        setAdminPage(1);
+                      }}
+                      className={`px-3 py-2 border transition-colors ${
+                        adminProductFilter === f.val
+                          ? 'bg-black text-white border-black'
+                          : 'bg-white text-neutral-700 border-neutral-200 hover:border-black'
+                      }`}
+                    >
+                      {f.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Products Table */}
+              <div className="bg-white border border-neutral-200 overflow-x-auto shadow-xs">
+                <table className="w-full text-left text-xs min-w-[720px]">
+                  <thead className="border-b border-neutral-200 text-neutral-500 uppercase tracking-[0.2em] text-[10px] font-bold bg-neutral-50">
+                    <tr>
+                      <th className="py-3 px-4 w-16 text-center">ПОРЯДОК</th>
+                      <th className="py-3 px-4">ФОТО</th>
+                      <th className="py-3 px-4">НАЗВА</th>
+                      <th className="py-3 px-4">КАТЕГОРІЯ</th>
+                      <th className="py-3 px-4">НАЯВНІСТЬ</th>
+                      <th className="py-3 px-4">ЦІНА</th>
+                      <th className="py-3 px-4">РОЗМІРИ</th>
+                      <th className="py-3 px-4 text-right">ДІЇ</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-neutral-100">
+                    {paginatedAdminProducts.map(prod => {
+                      const actualIndex = products.findIndex(p => p.id === prod.id);
+                      return (
+                      <tr key={prod.id} className="hover:bg-neutral-50 transition-colors">
+                        <td className="py-3 px-4 text-center">
+                          <div className="flex items-center justify-center space-x-1">
+                            <button
+                              onClick={() => handleMoveProduct(actualIndex, 'up')}
+                              disabled={actualIndex <= 0}
+                              title="Підняти вище в каталозі"
+                              className="p-1.5 bg-neutral-100 hover:bg-black hover:text-white text-neutral-700 border border-neutral-200 disabled:opacity-20 disabled:hover:bg-neutral-100 disabled:hover:text-neutral-700 transition-colors cursor-pointer disabled:cursor-not-allowed"
+                            >
+                              <ChevronUp className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleMoveProduct(actualIndex, 'down')}
+                              disabled={actualIndex === -1 || actualIndex >= products.length - 1}
+                              title="Опустити нижче в каталозі"
+                              className="p-1.5 bg-neutral-100 hover:bg-black hover:text-white text-neutral-700 border border-neutral-200 disabled:opacity-20 disabled:hover:bg-neutral-100 disabled:hover:text-neutral-700 transition-colors cursor-pointer disabled:cursor-not-allowed"
+                            >
+                              <ChevronDown className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </td>
                       <td className="py-3 px-4">
                         <div className="flex items-center space-x-2">
                           <div className="relative w-10 h-12 bg-neutral-100 border border-neutral-200 flex-shrink-0">
@@ -693,12 +781,43 @@ export default function AdminPage() {
                         </div>
                       </td>
                     </tr>
-                  ))}
+                  );
+                })}
                 </tbody>
               </table>
             </div>
+
+            {/* Pagination Controls */}
+            {totalAdminPages > 1 && (
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono pt-3 pb-1 border-t border-neutral-100">
+                <span className="text-neutral-500 text-[11px]">
+                  Показано {(adminPage - 1) * ADMIN_ITEMS_PER_PAGE + 1} - {Math.min(adminPage * ADMIN_ITEMS_PER_PAGE, filteredAdminProducts.length)} з {filteredAdminProducts.length} позицій
+                </span>
+
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => setAdminPage(prev => Math.max(1, prev - 1))}
+                    disabled={adminPage === 1}
+                    className="p-2 border border-neutral-200 bg-white hover:bg-neutral-100 disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <span className="text-xs font-bold px-2">
+                    Стор. {adminPage} / {totalAdminPages}
+                  </span>
+                  <button
+                    onClick={() => setAdminPage(prev => Math.min(totalAdminPages, prev + 1))}
+                    disabled={adminPage === totalAdminPages}
+                    className="p-2 border border-neutral-200 bg-white hover:bg-neutral-100 disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
-        )}
+        );
+      })()}
 
         {/* TAB 3: ORDERS */}
         {activeTab === 'orders' && (
