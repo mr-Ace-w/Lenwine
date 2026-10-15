@@ -81,9 +81,9 @@ export default function SearchModal({ isOpen, onClose, products, onSelectProduct
                   <Image src={product.images[0]} alt={product.name} fill className="object-cover" />
                 </div>
                 <div>
-                  <h4 className="font-erd-heading text-xs uppercase text-white line-clamp-1">{product.name}</h4>
+                  <h4 className="font-bold text-xs uppercase tracking-[0.12em] text-white line-clamp-1">{product.name}</h4>
                   <p className="text-[9px] text-neutral-500 font-mono uppercase mt-0.5">{product.category}</p>
-                  <p className="text-xs font-mono font-bold mt-1 text-white">{product.price.toLocaleString('uk-UA')} ₴</p>
+                  <p className="text-xs font-bold tracking-[0.08em] mt-1 text-white">{product.price.toLocaleString('uk-UA')} ₴</p>
                 </div>
               </div>
             ))}

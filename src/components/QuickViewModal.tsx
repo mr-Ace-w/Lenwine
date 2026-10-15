@@ -67,15 +67,15 @@ export default function QuickViewModal({ product, onClose }: QuickViewModalProps
         {/* Info & Add to Cart */}
         <div className="w-full md:w-1/2 p-6 sm:p-8 flex flex-col justify-between overflow-y-auto">
           <div className="space-y-4">
-            <span className="text-[10px] tracking-[0.3em] font-semibold text-neutral-400 uppercase">
+            <span className="text-[10px] tracking-[0.25em] font-bold text-neutral-400 uppercase">
               LENWINE ARCHIVE • {product.category}
             </span>
 
-            <h2 className="font-erd-heading text-2xl uppercase tracking-wider text-black">
+            <h2 className="font-bold text-xl sm:text-2xl uppercase tracking-[0.15em] text-black">
               {product.name}
             </h2>
 
-            <div className="flex items-center space-x-3 text-lg font-bold font-mono">
+            <div className="flex items-center space-x-3 text-base sm:text-lg font-bold tracking-[0.1em] text-neutral-900">
               <span>{product.price.toLocaleString('uk-UA')} ₴</span>
               {product.originalPrice && (
                 <span className="text-sm font-normal text-neutral-400 line-through">

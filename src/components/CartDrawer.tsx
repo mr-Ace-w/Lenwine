@@ -64,7 +64,7 @@ export default function CartDrawer({ onOpenCheckout }: CartDrawerProps) {
                 <div className="flex-1 flex flex-col justify-between">
                   <div>
                     <div className="flex justify-between items-start">
-                      <h4 className="font-erd-heading text-xs uppercase tracking-wider text-white line-clamp-2">
+                      <h4 className="font-bold text-xs uppercase tracking-[0.12em] text-white line-clamp-2">
                         {item.product.name}
                       </h4>
                       <button
@@ -79,7 +79,7 @@ export default function CartDrawer({ onOpenCheckout }: CartDrawerProps) {
                       РОЗМІР: <span className="font-bold text-white">{item.selectedSize}</span>
                     </div>
 
-                    <div className="mt-1 text-xs font-mono font-bold text-white">
+                    <div className="mt-1 text-xs font-bold tracking-[0.08em] text-white">
                       {item.product.price.toLocaleString('uk-UA')} ₴
                     </div>
                   </div>

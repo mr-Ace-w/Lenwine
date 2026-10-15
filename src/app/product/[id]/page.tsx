@@ -227,15 +227,15 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         {/* Right: Info & Actions Column (px-4 on mobile for nice margins) */}
         <div className="flex flex-col justify-between space-y-6 sm:space-y-8 px-4 sm:px-0">
           <div className="space-y-4 sm:space-y-6">
-            <span className="text-[10px] font-mono tracking-[0.3em] font-extrabold text-neutral-400 uppercase">
+            <span className="text-[10px] tracking-[0.25em] font-bold text-neutral-400 uppercase">
               COLLECTION • {product.category}
             </span>
 
-            <h1 className="font-erd-heading text-2xl sm:text-3xl lg:text-4xl uppercase tracking-[0.08em] sm:tracking-[0.1em] text-black leading-tight">
+            <h1 className="font-bold text-2xl sm:text-3xl uppercase tracking-[0.15em] text-black leading-tight">
               {product.name}
             </h1>
 
-            <div className="flex items-center space-x-4 text-xl sm:text-2xl font-bold font-mono">
+            <div className="flex items-center space-x-3 text-lg sm:text-xl font-bold tracking-[0.1em] text-neutral-900">
               <span>{product.price.toLocaleString('uk-UA')} ₴</span>
               {product.originalPrice && (
                 <span className="text-sm text-neutral-400 line-through">
