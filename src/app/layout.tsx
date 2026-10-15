@@ -10,8 +10,41 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'LENWINE — High Fashion Couture',
-  description: 'Exclusive Zara-inspired luxury clothing store featuring Enfants Riches Déprimés typography.',
+  metadataBase: new URL('https://lenwine.site'),
+  title: {
+    default: 'LENWINE — High Fashion Couture Archive',
+    template: '%s | LENWINE',
+  },
+  description: 'Exclusive archive luxury clothing store featuring Rick Owens, Balenciaga, ERD, Chrome Hearts, Undercover and Maison Margiela. In-stock & individual pre-orders.',
+  keywords: ['LENWINE', 'archive fashion', 'Rick Owens', 'Balenciaga', 'ERD', 'Chrome Hearts', 'Undercover', 'luxury streetwear', 'купити одяг', 'архівний одяг'],
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: 'LENWINE — High Fashion Couture Archive',
+    description: 'Exclusive archive luxury clothing store featuring Rick Owens, Balenciaga, ERD, Chrome Hearts, Undercover.',
+    url: 'https://lenwine.site',
+    siteName: 'LENWINE',
+    images: [
+      {
+        url: '/logo-black.png',
+        width: 1200,
+        height: 630,
+        alt: 'LENWINE Archive',
+      },
+    ],
+    locale: 'uk_UA',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'LENWINE — High Fashion Couture Archive',
+    description: 'Exclusive archive luxury clothing store.',
+    images: ['/logo-black.png'],
+  },
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || '',
+  },
   icons: {
     icon: [
       { url: '/favicon.ico' },
