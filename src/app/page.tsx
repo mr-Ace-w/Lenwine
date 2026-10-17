@@ -39,6 +39,14 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-black text-white flex flex-col selection:bg-white selection:text-black overflow-x-hidden">
+      {/* Semantic SEO Headings for Google Search Indexing */}
+      <div className="sr-only">
+        <h1>LENWINE — Ексклюзивний магазин архівного та брендового одягу в Україні</h1>
+        <p>
+          Купити оригінальний архівний одяг та преміальне взуття: Rick Owens, Balenciaga, Enfants Riches Déprimés, Chrome Hearts, Maison Margiela, Undercover. Більше 600 позицій в наявності та під замовлення з доставкою по Україні.
+        </p>
+      </div>
+
       {/* Completely Transparent Floating Header overlaying Hero */}
       <Header onSearchClick={() => setIsSearchOpen(true)} />
 

@@ -45,11 +45,23 @@ export const metadata: Metadata = {
   verification: {
     google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || '',
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
   icons: {
     icon: [
-      { url: '/favicon.ico' },
-      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon.ico', sizes: '48x48' },
+      { url: '/favicon-48x48.png', sizes: '48x48', type: 'image/png' },
       { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
       { url: '/icon.png', sizes: '512x512', type: 'image/png' },
     ],
     apple: [
@@ -70,8 +82,52 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const organizationJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ClothingStore',
+    name: 'LENWINE',
+    alternateName: 'LENWINE Archive',
+    url: 'https://lenwine.site',
+    logo: 'https://lenwine.site/logo-black.png',
+    image: 'https://lenwine.site/logo-black.png',
+    description: 'Магазин преміального архівного одягу та взуття: Rick Owens, Balenciaga, ERD, Chrome Hearts, Maison Margiela. Доставка по Україні.',
+    sameAs: ['https://t.me/lenwine'],
+    currenciesAccepted: 'UAH',
+    paymentAccepted: 'Cash, Credit Card, Bank Transfer',
+    priceRange: '$$$$',
+    address: {
+      '@type': 'PostalAddress',
+      addressCountry: 'UA',
+    },
+  };
+
+  const webSiteJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'LENWINE',
+    url: 'https://lenwine.site',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: 'https://lenwine.site/catalog?brand={search_term_string}',
+      },
+      'query-input': 'required name=search_term_string',
+    },
+  };
+
   return (
     <html lang="uk" className="bg-black">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(webSiteJsonLd) }}
+        />
+      </head>
       <body className="antialiased bg-black text-white font-sans">
         <CartProvider>
           {children}
