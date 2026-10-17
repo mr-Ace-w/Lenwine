@@ -423,45 +423,45 @@ export default function AdminPage() {
 
   // MAIN ADMIN DASHBOARD WHEN AUTHENTICATED
   return (
-    <div className="min-h-screen bg-white text-black font-sans selection:bg-black selection:text-white">
+    <div className="min-h-screen bg-neutral-50 text-black font-sans selection:bg-black selection:text-white pb-12">
       {/* Top Header Bar */}
-      <header className="border-b border-neutral-200 bg-white/90 backdrop-blur-md px-4 sm:px-6 py-3 sm:py-4 sticky top-0 z-30 flex items-center justify-between shadow-xs">
-        <div className="flex items-center space-x-3 sm:space-x-6">
+      <header className="border-b border-neutral-200 bg-white/95 backdrop-blur-md px-3 sm:px-6 py-2.5 sm:py-4 sticky top-0 z-30 flex items-center justify-between shadow-xs">
+        <div className="flex items-center space-x-2 sm:space-x-6">
           <Link
             href="/"
-            className="flex items-center space-x-1.5 text-xs font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-neutral-600 hover:text-black transition-colors"
+            className="flex items-center space-x-1.5 p-1 sm:p-0 text-[11px] sm:text-xs font-bold uppercase tracking-[0.15em] sm:tracking-[0.2em] text-neutral-600 hover:text-black transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span className="hidden sm:inline">МАГАЗИН</span>
           </Link>
           <div className="h-4 w-px bg-neutral-200" />
           <div className="flex items-center space-x-2 sm:space-x-3">
-            <div className="relative h-5 sm:h-6 w-24 sm:w-32">
+            <div className="relative h-4 sm:h-6 w-20 sm:w-32">
               <Image src="/logo-black.png" alt="LENWINE" fill className="object-contain object-left" />
             </div>
-            <span className="text-[10px] sm:text-xs font-bold tracking-[0.15em] sm:tracking-[0.2em] uppercase text-amber-700 font-mono">
+            <span className="text-[9px] sm:text-xs font-bold tracking-[0.15em] sm:tracking-[0.2em] uppercase text-amber-700 font-mono bg-amber-50 px-1.5 py-0.5 border border-amber-200">
               [ADMIN]
             </span>
           </div>
         </div>
 
-        <div className="flex items-center space-x-2 sm:space-x-3">
+        <div className="flex items-center space-x-1.5 sm:space-x-3">
           <button
             onClick={fetchData}
             aria-label="Оновити дані"
-            className="p-2 sm:px-3 sm:py-2 bg-neutral-100 hover:bg-neutral-200 text-black border border-neutral-300 transition-colors flex items-center space-x-1.5 text-xs font-bold uppercase tracking-wider"
+            className="p-2 sm:px-3 sm:py-2 bg-neutral-100 hover:bg-neutral-200 text-black border border-neutral-300 transition-colors flex items-center space-x-1.5 text-xs font-bold uppercase tracking-wider cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-            <span className="hidden md:inline">ОНОВИТИ</span>
+            <span className="hidden sm:inline">ОНОВИТИ</span>
           </button>
 
           <button
             onClick={handleLogout}
             aria-label="Вихід"
-            className="p-2 sm:px-3 sm:py-2 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 transition-colors flex items-center space-x-1.5 text-xs font-bold uppercase tracking-wider"
+            className="p-2 sm:px-3 sm:py-2 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 transition-colors flex items-center space-x-1.5 text-xs font-bold uppercase tracking-wider cursor-pointer"
           >
             <LogOut className="w-3.5 h-3.5" />
-            <span className="hidden md:inline">ВИХІД</span>
+            <span className="hidden sm:inline">ВИХІД</span>
           </button>
         </div>
       </header>
@@ -469,33 +469,33 @@ export default function AdminPage() {
       {/* Main Container */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-6 sm:py-10">
         {/* Navigation Tabs */}
-        <div className="flex space-x-2 sm:space-x-4 border-b border-neutral-200 mb-6 sm:mb-8 pb-px overflow-x-auto whitespace-nowrap">
+        <div className="flex border-b border-neutral-200 mb-5 sm:mb-8 overflow-x-auto no-scrollbar -mx-3 px-3 sm:mx-0 sm:px-0 gap-1 sm:gap-2">
           <button
             onClick={() => setActiveTab('dashboard')}
-            className={`px-4 sm:px-6 py-2.5 sm:py-3 text-[11px] sm:text-xs font-bold tracking-[0.15em] sm:tracking-[0.2em] uppercase transition-all border-b-2 flex-shrink-0 ${
+            className={`px-3.5 sm:px-6 py-2.5 sm:py-3 text-[11px] sm:text-xs font-bold tracking-[0.12em] sm:tracking-[0.2em] uppercase transition-all border-b-2 shrink-0 cursor-pointer ${
               activeTab === 'dashboard'
-                ? 'border-black text-black font-extrabold bg-neutral-50'
-                : 'border-transparent text-neutral-400 hover:text-black'
+                ? 'border-black text-black font-extrabold bg-white shadow-xs'
+                : 'border-transparent text-neutral-400 hover:text-black hover:bg-neutral-100/50'
             }`}
           >
             ДАШБОРД
           </button>
           <button
             onClick={() => setActiveTab('products')}
-            className={`px-4 sm:px-6 py-2.5 sm:py-3 text-[11px] sm:text-xs font-bold tracking-[0.15em] sm:tracking-[0.2em] uppercase transition-all border-b-2 flex-shrink-0 ${
+            className={`px-3.5 sm:px-6 py-2.5 sm:py-3 text-[11px] sm:text-xs font-bold tracking-[0.12em] sm:tracking-[0.2em] uppercase transition-all border-b-2 shrink-0 cursor-pointer ${
               activeTab === 'products'
-                ? 'border-black text-black font-extrabold bg-neutral-50'
-                : 'border-transparent text-neutral-400 hover:text-black'
+                ? 'border-black text-black font-extrabold bg-white shadow-xs'
+                : 'border-transparent text-neutral-400 hover:text-black hover:bg-neutral-100/50'
             }`}
           >
             ТОВАРИ ({products.length})
           </button>
           <button
             onClick={() => setActiveTab('orders')}
-            className={`px-4 sm:px-6 py-2.5 sm:py-3 text-[11px] sm:text-xs font-bold tracking-[0.15em] sm:tracking-[0.2em] uppercase transition-all border-b-2 flex-shrink-0 ${
+            className={`px-3.5 sm:px-6 py-2.5 sm:py-3 text-[11px] sm:text-xs font-bold tracking-[0.12em] sm:tracking-[0.2em] uppercase transition-all border-b-2 shrink-0 cursor-pointer ${
               activeTab === 'orders'
-                ? 'border-black text-black font-extrabold bg-neutral-50'
-                : 'border-transparent text-neutral-400 hover:text-black'
+                ? 'border-black text-black font-extrabold bg-white shadow-xs'
+                : 'border-transparent text-neutral-400 hover:text-black hover:bg-neutral-100/50'
             }`}
           >
             ЗАМОВЛЕННЯ ({orders.length})
@@ -504,75 +504,83 @@ export default function AdminPage() {
 
         {/* TAB 1: DASHBOARD */}
         {activeTab === 'dashboard' && (
-          <div className="space-y-8 animate-fade-in">
+          <div className="space-y-6 sm:space-y-8 animate-fade-in">
             {/* Stat Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              <div className="bg-neutral-50 border border-neutral-200 p-6 shadow-xs">
-                <div className="flex items-center justify-between text-neutral-500 text-xs font-bold tracking-[0.2em] uppercase">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-6">
+              <div className="bg-white border border-neutral-200 p-4 sm:p-6 shadow-xs">
+                <div className="flex items-center justify-between text-neutral-500 text-[10px] sm:text-xs font-bold tracking-[0.15em] sm:tracking-[0.2em] uppercase">
                   <span>ЗАГАЛЬНИЙ ДОХІД</span>
-                  <TrendingUp className="w-5 h-5 text-emerald-600" />
+                  <div className="p-1.5 bg-emerald-50 rounded-xs">
+                    <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
+                  </div>
                 </div>
-                <div className="mt-4 text-3xl font-mono font-bold text-black">
+                <div className="mt-3 sm:mt-4 text-2xl sm:text-3xl font-mono font-bold text-black">
                   {totalRevenue.toLocaleString('uk-UA')} ₴
                 </div>
-                <div className="mt-2 text-[10px] text-neutral-400 font-mono uppercase tracking-[0.2em]">
+                <div className="mt-1.5 sm:mt-2 text-[9px] sm:text-[10px] text-neutral-400 font-mono uppercase tracking-wider sm:tracking-[0.2em]">
                   З МОМЕНТУ ЗАПУСКУ МЕРЕЖІ
                 </div>
               </div>
 
-              <div className="bg-neutral-50 border border-neutral-200 p-6 shadow-xs">
-                <div className="flex items-center justify-between text-neutral-500 text-xs font-bold tracking-[0.2em] uppercase">
+              <div className="bg-white border border-neutral-200 p-4 sm:p-6 shadow-xs">
+                <div className="flex items-center justify-between text-neutral-500 text-[10px] sm:text-xs font-bold tracking-[0.15em] sm:tracking-[0.2em] uppercase">
                   <span>ОФОРМЛЕНО ЗАМОВЛЕНЬ</span>
-                  <ShoppingBag className="w-5 h-5 text-black" />
+                  <div className="p-1.5 bg-neutral-100 rounded-xs">
+                    <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 text-black" />
+                  </div>
                 </div>
-                <div className="mt-4 text-3xl font-mono font-bold text-black">
+                <div className="mt-3 sm:mt-4 text-2xl sm:text-3xl font-mono font-bold text-black">
                   {totalOrdersCount}
                 </div>
-                <div className="mt-2 text-[10px] text-neutral-400 font-mono uppercase tracking-[0.2em]">
+                <div className="mt-1.5 sm:mt-2 text-[9px] sm:text-[10px] text-neutral-400 font-mono uppercase tracking-wider sm:tracking-[0.2em]">
                   АКТИВНІ ТА ВИКОНАНІ
                 </div>
               </div>
 
-              <div className="bg-neutral-50 border border-neutral-200 p-6 shadow-xs">
-                <div className="flex items-center justify-between text-neutral-500 text-xs font-bold tracking-[0.2em] uppercase">
+              <div className="bg-white border border-neutral-200 p-4 sm:p-6 shadow-xs">
+                <div className="flex items-center justify-between text-neutral-500 text-[10px] sm:text-xs font-bold tracking-[0.15em] sm:tracking-[0.2em] uppercase">
                   <span>ПОЗИЦІЙ В КАТАЛОЗІ</span>
-                  <Package className="w-5 h-5 text-black" />
+                  <div className="p-1.5 bg-neutral-100 rounded-xs">
+                    <Package className="w-4 h-4 sm:w-5 sm:h-5 text-black" />
+                  </div>
                 </div>
-                <div className="mt-4 text-3xl font-mono font-bold text-black">
+                <div className="mt-3 sm:mt-4 text-2xl sm:text-3xl font-mono font-bold text-black">
                   {totalProductsCount}
                 </div>
-                <div className="mt-2 text-[10px] text-neutral-400 font-mono uppercase tracking-[0.2em]">
+                <div className="mt-1.5 sm:mt-2 text-[9px] sm:text-[10px] text-neutral-400 font-mono uppercase tracking-wider sm:tracking-[0.2em]">
                   В НАЯВНОСТІ В МАГАЗИНІ
                 </div>
               </div>
             </div>
 
-            {/* Recent Orders Overview Table */}
-            <div className="bg-white border border-neutral-200 p-6 shadow-xs">
-              <h3 className="font-extrabold text-sm tracking-[0.2em] uppercase text-black mb-4">
-                ОСТАННІ ЗАМОВЛЕННЯ
-              </h3>
+            {/* Recent Orders Overview */}
+            <div className="bg-white border border-neutral-200 p-4 sm:p-6 shadow-xs">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-extrabold text-xs sm:text-sm tracking-[0.15em] sm:tracking-[0.2em] uppercase text-black">
+                  ОСТАННІ ЗАМОВЛЕННЯ
+                </h3>
+                <button
+                  onClick={() => setActiveTab('orders')}
+                  className="text-[10px] sm:text-xs font-mono font-bold text-neutral-500 hover:text-black uppercase tracking-wider underline cursor-pointer"
+                >
+                  ВСІ ЗАМОВЛЕННЯ →
+                </button>
+              </div>
 
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="border-b border-neutral-200 text-neutral-500 uppercase tracking-[0.2em] text-[10px] font-bold">
-                    <tr>
-                      <th className="py-3 px-4">ID</th>
-                      <th className="py-3 px-4">КЛІЄНТ</th>
-                      <th className="py-3 px-4">СУМА</th>
-                      <th className="py-3 px-4">СТАТУС</th>
-                      <th className="py-3 px-4">ДАТА</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-neutral-100 font-medium">
+              {orders.length === 0 ? (
+                <div className="text-center py-8 text-neutral-400 text-xs font-mono uppercase">
+                  Немає оформлених замовлень
+                </div>
+              ) : (
+                <>
+                  {/* Mobile Recent Orders Cards */}
+                  <div className="block sm:hidden divide-y divide-neutral-100">
                     {orders.slice(0, 5).map(order => (
-                      <tr key={order.id} className="hover:bg-neutral-50">
-                        <td className="py-3 px-4 font-mono font-bold text-black">{order.id}</td>
-                        <td className="py-3 px-4 font-bold">{order.customerName}</td>
-                        <td className="py-3 px-4 font-mono font-bold">{order.totalAmount.toLocaleString('uk-UA')} ₴</td>
-                        <td className="py-3 px-4">
+                      <div key={order.id} className="py-3.5 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="font-mono font-bold text-xs text-black">{order.id}</span>
                           <span
-                            className={`px-2.5 py-1 text-[9px] font-bold tracking-[0.15em] uppercase ${
+                            className={`px-2 py-0.5 text-[9px] font-bold tracking-wider uppercase font-mono ${
                               order.status === 'Shipped'
                                 ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
                                 : order.status === 'Processing'
@@ -582,15 +590,59 @@ export default function AdminPage() {
                           >
                             {order.status}
                           </span>
-                        </td>
-                        <td className="py-3 px-4 text-neutral-500 text-[10px] font-mono">
+                        </div>
+                        <div className="flex items-center justify-between text-xs">
+                          <span className="font-bold text-neutral-800">{order.customerName}</span>
+                          <span className="font-mono font-bold text-black">{order.totalAmount.toLocaleString('uk-UA')} ₴</span>
+                        </div>
+                        <div className="text-[10px] text-neutral-400 font-mono">
                           {new Date(order.createdAt).toLocaleDateString('uk-UA')}
-                        </td>
-                      </tr>
+                        </div>
+                      </div>
                     ))}
-                  </tbody>
-                </table>
-              </div>
+                  </div>
+
+                  {/* Desktop Recent Orders Table */}
+                  <div className="hidden sm:block overflow-x-auto">
+                    <table className="w-full text-left text-xs">
+                      <thead className="border-b border-neutral-200 text-neutral-500 uppercase tracking-[0.2em] text-[10px] font-bold">
+                        <tr>
+                          <th className="py-3 px-4">ID</th>
+                          <th className="py-3 px-4">КЛІЄНТ</th>
+                          <th className="py-3 px-4">СУМА</th>
+                          <th className="py-3 px-4">СТАТУС</th>
+                          <th className="py-3 px-4">ДАТА</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-neutral-100 font-medium">
+                        {orders.slice(0, 5).map(order => (
+                          <tr key={order.id} className="hover:bg-neutral-50">
+                            <td className="py-3 px-4 font-mono font-bold text-black">{order.id}</td>
+                            <td className="py-3 px-4 font-bold">{order.customerName}</td>
+                            <td className="py-3 px-4 font-mono font-bold">{order.totalAmount.toLocaleString('uk-UA')} ₴</td>
+                            <td className="py-3 px-4">
+                              <span
+                                className={`px-2.5 py-1 text-[9px] font-bold tracking-[0.15em] uppercase ${
+                                  order.status === 'Shipped'
+                                    ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                                    : order.status === 'Processing'
+                                    ? 'bg-amber-100 text-amber-800 border border-amber-300'
+                                    : 'bg-neutral-100 text-neutral-800 border border-neutral-300'
+                                }`}
+                              >
+                                {order.status}
+                              </span>
+                            </td>
+                            <td className="py-3 px-4 text-neutral-500 text-[10px] font-mono">
+                              {new Date(order.createdAt).toLocaleDateString('uk-UA')}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         )}
@@ -620,15 +672,15 @@ export default function AdminPage() {
           );
 
           return (
-            <div className="space-y-6 animate-fade-in">
+            <div className="space-y-4 sm:space-y-6 animate-fade-in">
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
                 <div>
-                  <h3 className="font-extrabold text-sm sm:text-base tracking-[0.2em] uppercase">УПРАВЛІННЯ КАТАЛОГОМ</h3>
-                  <p className="text-[10px] font-mono text-neutral-400 uppercase mt-0.5">Всього позицій у базі: {products.length}</p>
+                  <h3 className="font-extrabold text-sm sm:text-base tracking-[0.15em] sm:tracking-[0.2em] uppercase">УПРАВЛІННЯ КАТАЛОГОМ</h3>
+                  <p className="text-[10px] font-mono text-neutral-500 uppercase mt-0.5">Всього: {products.length} позицій</p>
                 </div>
                 <button
                   onClick={handleOpenCreate}
-                  className="bg-black text-white px-5 py-3 text-xs font-bold tracking-[0.2em] uppercase flex items-center justify-center space-x-2 hover:bg-neutral-800 transition-colors shadow-md text-center"
+                  className="bg-black text-white px-4 sm:px-5 py-3 text-xs font-bold tracking-[0.15em] sm:tracking-[0.2em] uppercase flex items-center justify-center space-x-2 hover:bg-neutral-800 transition-colors shadow-md text-center cursor-pointer active:scale-[0.99]"
                 >
                   <Plus className="w-4 h-4" />
                   <span>ДОДАТИ НОВИЙ ТОВАР</span>
@@ -636,18 +688,18 @@ export default function AdminPage() {
               </div>
 
               {/* Search and Filter Toolbar */}
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-neutral-50 border border-neutral-200 p-3">
-                <div className="relative flex-1">
+              <div className="flex flex-col gap-2.5 bg-white border border-neutral-200 p-3 sm:p-3.5 shadow-xs">
+                <div className="relative w-full">
                   <Search className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                   <input
                     type="text"
-                    placeholder="Швидкий пошук товару за назвою, брендом чи ID..."
+                    placeholder="Пошук товару за назвою, брендом чи ID..."
                     value={adminProductSearch}
                     onChange={e => {
                       setAdminProductSearch(e.target.value);
                       setAdminPage(1);
                     }}
-                    className="w-full bg-white border border-neutral-200 pl-9 pr-8 py-2 text-xs font-medium text-black placeholder-neutral-400 outline-hidden focus:border-black transition-colors"
+                    className="w-full bg-neutral-50 border border-neutral-200 pl-9 pr-8 py-2.5 text-xs font-medium text-black placeholder-neutral-400 outline-hidden focus:border-black focus:bg-white transition-colors"
                   />
                   {adminProductSearch && (
                     <button
@@ -655,6 +707,7 @@ export default function AdminPage() {
                         setAdminProductSearch('');
                         setAdminPage(1);
                       }}
+                      aria-label="Очистити пошук"
                       className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-black p-1"
                     >
                       <X className="w-3.5 h-3.5" />
@@ -662,7 +715,7 @@ export default function AdminPage() {
                   )}
                 </div>
 
-                <div className="flex items-center space-x-1.5 text-[10px] font-bold tracking-wider">
+                <div className="flex items-center space-x-1.5 overflow-x-auto no-scrollbar pb-0.5 text-[10px] font-bold tracking-wider">
                   {[
                     { label: `ВСІ (${products.length})`, val: 'ALL' },
                     { label: `В НАЯВНОСТІ (${inStockCount})`, val: 'IN_STOCK' },
@@ -674,10 +727,10 @@ export default function AdminPage() {
                         setAdminProductFilter(f.val as any);
                         setAdminPage(1);
                       }}
-                      className={`px-3 py-2 border transition-colors ${
+                      className={`px-3 py-2 border shrink-0 transition-colors cursor-pointer ${
                         adminProductFilter === f.val
-                          ? 'bg-black text-white border-black'
-                          : 'bg-white text-neutral-700 border-neutral-200 hover:border-black'
+                          ? 'bg-black text-white border-black shadow-xs'
+                          : 'bg-neutral-50 text-neutral-700 border-neutral-200 hover:border-black'
                       }`}
                     >
                       {f.label}
@@ -686,8 +739,126 @@ export default function AdminPage() {
                 </div>
               </div>
 
-              {/* Products Table */}
-              <div className="bg-white border border-neutral-200 overflow-x-auto shadow-xs">
+              {/* MOBILE: Product Cards View */}
+              <div className="block lg:hidden space-y-3">
+                {paginatedAdminProducts.length === 0 ? (
+                  <div className="bg-white border border-neutral-200 p-8 text-center text-xs font-mono text-neutral-500 uppercase">
+                    Товарів не знайдено
+                  </div>
+                ) : (
+                  paginatedAdminProducts.map(prod => {
+                    const actualIndex = products.findIndex(p => p.id === prod.id);
+                    return (
+                      <div
+                        key={prod.id}
+                        className="bg-white border border-neutral-200 p-3.5 shadow-xs space-y-3 transition-shadow hover:shadow-md"
+                      >
+                        <div className="flex items-start space-x-3">
+                          {/* Product Thumbnail with photo counter badge */}
+                          <div className="relative w-16 h-20 bg-neutral-100 border border-neutral-200 shrink-0 overflow-hidden">
+                            {prod.images && prod.images[0] ? (
+                              <Image src={prod.images[0]} alt={prod.name} fill className="object-cover" />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-[8px] text-neutral-400">НЕМАЄ</div>
+                            )}
+                            <span className="absolute bottom-0 right-0 bg-black/80 backdrop-blur-xs text-white text-[8px] font-mono px-1 py-0.5">
+                              {prod.images?.length || 0} фото
+                            </span>
+                          </div>
+
+                          {/* Info */}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start justify-between gap-2">
+                              <h4 className="font-bold text-xs text-black leading-snug line-clamp-2">
+                                {prod.name}
+                              </h4>
+                              <span
+                                className={`shrink-0 px-1.5 py-0.5 text-[8px] font-bold tracking-wider uppercase font-mono ${
+                                  prod.inStock !== false
+                                    ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                                    : 'bg-amber-50 text-amber-800 border border-amber-200'
+                                }`}
+                              >
+                                {prod.inStock !== false ? 'В НАЯВНОСТІ' : 'ПЕРЕДЗАМОВЛ.'}
+                              </span>
+                            </div>
+
+                            {(prod.brand || prod.clothingType) && (
+                              <div className="text-[10px] font-mono text-neutral-500 uppercase mt-1 truncate">
+                                {prod.brand ? <span className="font-bold text-neutral-800">{prod.brand}</span> : null}
+                                {prod.brand && prod.clothingType ? ' • ' : ''}
+                                {prod.clothingType ? (CLOTHING_TYPES.find(t => t.id === prod.clothingType)?.label || prod.clothingType) : ''}
+                              </div>
+                            )}
+
+                            <div className="mt-2 flex items-baseline space-x-2">
+                              <span className="font-mono font-bold text-sm text-black">
+                                {prod.price.toLocaleString('uk-UA')} ₴
+                              </span>
+                              {prod.originalPrice && (
+                                <span className="font-mono text-neutral-400 line-through text-[11px]">
+                                  {prod.originalPrice.toLocaleString('uk-UA')} ₴
+                                </span>
+                              )}
+                            </div>
+
+                            {prod.sizes && prod.sizes.length > 0 && (
+                              <div className="text-[10px] font-mono text-neutral-500 mt-1">
+                                Розміри: <span className="text-neutral-800 font-semibold">{prod.sizes.join(', ')}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Mobile Action Buttons Bar */}
+                        <div className="pt-2.5 border-t border-neutral-100 flex items-center justify-between gap-2">
+                          {/* Reorder Buttons */}
+                          <div className="flex items-center space-x-1.5 bg-neutral-50 px-2 py-1 border border-neutral-200">
+                            <span className="text-[9px] font-mono uppercase text-neutral-400 font-bold mr-1">ПОЗИЦІЯ:</span>
+                            <button
+                              onClick={() => handleMoveProduct(actualIndex, 'up')}
+                              disabled={actualIndex <= 0}
+                              aria-label="Підняти вище"
+                              className="p-1.5 bg-white hover:bg-black hover:text-white text-neutral-700 border border-neutral-200 disabled:opacity-20 transition-colors cursor-pointer"
+                            >
+                              <ChevronUp className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleMoveProduct(actualIndex, 'down')}
+                              disabled={actualIndex === -1 || actualIndex >= products.length - 1}
+                              aria-label="Опустити нижче"
+                              className="p-1.5 bg-white hover:bg-black hover:text-white text-neutral-700 border border-neutral-200 disabled:opacity-20 transition-colors cursor-pointer"
+                            >
+                              <ChevronDown className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+
+                          {/* Edit / Delete Buttons */}
+                          <div className="flex items-center space-x-2">
+                            <button
+                              onClick={() => handleOpenEdit(prod)}
+                              className="px-3 py-1.5 bg-neutral-100 hover:bg-black hover:text-white text-neutral-800 border border-neutral-300 transition-colors flex items-center space-x-1.5 text-[11px] font-bold uppercase tracking-wider cursor-pointer"
+                            >
+                              <Pencil className="w-3 h-3" />
+                              <span>РЕД.</span>
+                            </button>
+                            <button
+                              onClick={() => handleDeleteProduct(prod.id)}
+                              className="p-1.5 bg-red-50 hover:bg-red-600 hover:text-white text-red-700 border border-red-200 transition-colors cursor-pointer"
+                              title="Видалити"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+
+              {/* DESKTOP: Products Table */}
+              <div className="hidden lg:block bg-white border border-neutral-200 overflow-x-auto shadow-xs">
                 <table className="w-full text-left text-xs min-w-[720px]">
                   <thead className="border-b border-neutral-200 text-neutral-500 uppercase tracking-[0.2em] text-[10px] font-bold bg-neutral-50">
                     <tr>
@@ -728,7 +899,7 @@ export default function AdminPage() {
                         </td>
                       <td className="py-3 px-4">
                         <div className="flex items-center space-x-2">
-                          <div className="relative w-10 h-12 bg-neutral-100 border border-neutral-200 flex-shrink-0">
+                          <div className="relative w-10 h-12 bg-neutral-100 border border-neutral-200 shrink-0">
                             {prod.images && prod.images[0] ? (
                               <Image src={prod.images[0]} alt={prod.name} fill className="object-cover" />
                             ) : (
@@ -789,7 +960,7 @@ export default function AdminPage() {
 
             {/* Pagination Controls */}
             {totalAdminPages > 1 && (
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono pt-3 pb-1 border-t border-neutral-100">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono pt-3 pb-1 border-t border-neutral-200">
                 <span className="text-neutral-500 text-[11px]">
                   Показано {(adminPage - 1) * ADMIN_ITEMS_PER_PAGE + 1} - {Math.min(adminPage * ADMIN_ITEMS_PER_PAGE, filteredAdminProducts.length)} з {filteredAdminProducts.length} позицій
                 </span>
@@ -821,68 +992,92 @@ export default function AdminPage() {
 
         {/* TAB 3: ORDERS */}
         {activeTab === 'orders' && (
-          <div className="space-y-6 animate-fade-in">
-            <h3 className="font-extrabold text-base tracking-[0.2em] uppercase">УПРАВЛІННЯ ЗАМОВЛЕННЯМИ</h3>
+          <div className="space-y-4 sm:space-y-6 animate-fade-in">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+              <h3 className="font-extrabold text-sm sm:text-base tracking-[0.15em] sm:tracking-[0.2em] uppercase">УПРАВЛІННЯ ЗАМОВЛЕННЯМИ</h3>
+              <p className="text-[10px] font-mono text-neutral-500 uppercase">Всього: {orders.length} замовлень</p>
+            </div>
 
-            <div className="space-y-4">
-              {orders.map(ord => (
-                <div key={ord.id} className="bg-white border border-neutral-200 p-6 space-y-4 shadow-xs">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-neutral-100 pb-4 gap-2">
-                    <div>
-                      <span className="font-mono text-black font-extrabold text-base mr-3">{ord.id}</span>
-                      <span className="text-xs text-neutral-400 font-mono">
-                        {new Date(ord.createdAt).toLocaleString('uk-UA')}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center space-x-3">
-                      <span className="text-xs text-neutral-500 uppercase font-bold tracking-wider">СТАТУС:</span>
-                      <select
-                        value={ord.status}
-                        onChange={e => handleUpdateOrderStatus(ord.id, e.target.value)}
-                        className="bg-white border border-neutral-300 text-xs px-3 py-1.5 font-bold uppercase text-black focus:outline-hidden"
-                      >
-                        <option value="Pending">Pending (Очікує)</option>
-                        <option value="Processing">Processing (Обробка)</option>
-                        <option value="Shipped">Shipped (Відправлено)</option>
-                        <option value="Delivered">Delivered (Доставлено)</option>
-                        <option value="Cancelled">Cancelled (Скасовано)</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs">
-                    <div>
-                      <p className="text-[10px] text-neutral-500 uppercase tracking-[0.2em] font-bold mb-1">
-                        ІНФОРМАЦІЯ ПРО КЛІЄНТА
-                      </p>
-                      <p className="font-bold text-black text-sm">{ord.customerName}</p>
-                      <p className="text-neutral-600 font-mono">{ord.customerEmail} • {ord.customerPhone}</p>
-                      <p className="text-neutral-800 mt-2 bg-neutral-50 p-2.5 border border-neutral-200 font-medium">
-                        📍 {ord.shippingAddress}
-                      </p>
-                    </div>
-
-                    <div>
-                      <p className="text-[10px] text-neutral-500 uppercase tracking-[0.2em] font-bold mb-1">
-                        ТОВАРИ В ЗАМОВЛЕННІ
-                      </p>
-                      <div className="space-y-2 max-h-36 overflow-y-auto pr-2 font-medium">
-                        {ord.items.map((item, i) => (
-                          <div key={i} className="flex justify-between items-center text-xs border-b border-neutral-100 pb-1">
-                            <span>{item.name} ({item.size}) x{item.quantity}</span>
-                            <span className="font-mono font-bold text-black">{(item.price * item.quantity).toLocaleString('uk-UA')} ₴</span>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="mt-3 pt-2 border-t border-neutral-200 flex justify-between font-bold text-sm">
-                        <span>ЗАГАЛОМ:</span>
-                        <span className="font-mono font-extrabold text-black">{ord.totalAmount.toLocaleString('uk-UA')} ₴</span>
-                      </div>
-                    </div>
-                  </div>
+            <div className="space-y-3.5 sm:space-y-4">
+              {orders.length === 0 ? (
+                <div className="bg-white border border-neutral-200 p-8 text-center text-xs font-mono text-neutral-500 uppercase">
+                  Замовлень поки що немає
                 </div>
-              ))}
+              ) : (
+                orders.map(ord => (
+                  <div key={ord.id} className="bg-white border border-neutral-200 p-4 sm:p-6 space-y-4 shadow-xs">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-neutral-100 pb-3 gap-2.5">
+                      <div className="flex items-center justify-between sm:justify-start">
+                        <span className="font-mono text-black font-extrabold text-sm sm:text-base mr-3">{ord.id}</span>
+                        <span className="text-[11px] sm:text-xs text-neutral-400 font-mono">
+                          {new Date(ord.createdAt).toLocaleString('uk-UA')}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center space-x-2 sm:space-x-3 bg-neutral-50 sm:bg-transparent p-2 sm:p-0 border sm:border-0 border-neutral-200">
+                        <span className="text-[10px] sm:text-xs text-neutral-500 uppercase font-bold tracking-wider">СТАТУС:</span>
+                        <select
+                          value={ord.status}
+                          onChange={e => handleUpdateOrderStatus(ord.id, e.target.value)}
+                          className="flex-1 sm:flex-none bg-white border border-neutral-300 text-xs px-2.5 py-1.5 font-bold uppercase text-black focus:outline-hidden cursor-pointer"
+                        >
+                          <option value="Pending">Pending (Очікує)</option>
+                          <option value="Processing">Processing (Обробка)</option>
+                          <option value="Shipped">Shipped (Відправлено)</option>
+                          <option value="Delivered">Delivered (Доставлено)</option>
+                          <option value="Cancelled">Cancelled (Скасовано)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 text-xs">
+                      <div className="bg-neutral-50/60 p-3 sm:p-0 sm:bg-transparent border sm:border-0 border-neutral-100">
+                        <p className="text-[10px] text-neutral-500 uppercase tracking-[0.15em] sm:tracking-[0.2em] font-bold mb-1">
+                          ІНФОРМАЦІЯ ПРО КЛІЄНТА
+                        </p>
+                        <p className="font-bold text-black text-sm">{ord.customerName}</p>
+                        <div className="text-neutral-600 font-mono text-[11px] mt-0.5 space-y-0.5">
+                          {ord.customerPhone && (
+                            <div>
+                              <a href={`tel:${ord.customerPhone}`} className="hover:text-black underline">
+                                📞 {ord.customerPhone}
+                              </a>
+                            </div>
+                          )}
+                          {ord.customerEmail && (
+                            <div>
+                              <a href={`mailto:${ord.customerEmail}`} className="hover:text-black">
+                                ✉️ {ord.customerEmail}
+                              </a>
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-neutral-800 mt-2 bg-white sm:bg-neutral-50 p-2.5 border border-neutral-200 font-medium text-[11px] leading-relaxed">
+                          📍 {ord.shippingAddress}
+                        </p>
+                      </div>
+
+                      <div className="bg-neutral-50/60 p-3 sm:p-0 sm:bg-transparent border sm:border-0 border-neutral-100">
+                        <p className="text-[10px] text-neutral-500 uppercase tracking-[0.15em] sm:tracking-[0.2em] font-bold mb-1">
+                          ТОВАРИ В ЗАМОВЛЕННІ ({ord.items?.length || 0})
+                        </p>
+                        <div className="space-y-2 max-h-48 overflow-y-auto pr-1 font-medium">
+                          {ord.items.map((item, i) => (
+                            <div key={i} className="flex justify-between items-center text-xs border-b border-neutral-200/60 pb-1.5 pt-0.5">
+                              <span className="pr-2">{item.name} {item.size ? `(${item.size})` : ''} x{item.quantity}</span>
+                              <span className="font-mono font-bold text-black shrink-0">{(item.price * item.quantity).toLocaleString('uk-UA')} ₴</span>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="mt-3 pt-2 border-t border-neutral-300 flex justify-between font-bold text-sm">
+                          <span>ДО ОПЛАТИ:</span>
+                          <span className="font-mono font-extrabold text-black">{ord.totalAmount.toLocaleString('uk-UA')} ₴</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         )}
@@ -890,12 +1085,13 @@ export default function AdminPage() {
 
       {/* Add / Edit Product Modal */}
       {isProductModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4">
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-xs" onClick={() => setIsProductModalOpen(false)} />
-          <div className="relative w-full max-w-2xl bg-white border border-neutral-300 p-5 sm:p-8 shadow-2xl z-10 animate-fade-in text-black max-h-[92vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-neutral-200 pb-3 sm:pb-4 mb-4 sm:mb-6">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity" onClick={() => setIsProductModalOpen(false)} />
+          <div className="relative w-full max-w-2xl bg-white border-t sm:border border-neutral-300 p-4 sm:p-8 shadow-2xl z-10 animate-fade-in text-black h-[95vh] sm:h-auto sm:max-h-[90vh] flex flex-col rounded-t-2xl sm:rounded-none">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-neutral-200 pb-3 sm:pb-4 shrink-0">
               <div>
-                <h3 className="font-extrabold text-sm sm:text-base tracking-[0.2em] uppercase text-black">
+                <h3 className="font-extrabold text-sm sm:text-base tracking-[0.15em] sm:tracking-[0.2em] uppercase text-black">
                   {editingProduct ? 'РЕДАГУВАТИ ТОВАР' : 'ДОДАТИ НОВИЙ ТОВАР'}
                 </h3>
                 {editingProduct && (
@@ -905,13 +1101,14 @@ export default function AdminPage() {
               <button
                 onClick={() => setIsProductModalOpen(false)}
                 aria-label="Закрити"
-                className="p-1 hover:bg-neutral-100 rounded-sm transition-colors"
+                className="p-2 hover:bg-neutral-100 rounded-full transition-colors cursor-pointer"
               >
-                <X className="w-5 h-5 text-neutral-400 hover:text-black" />
+                <X className="w-5 h-5 text-neutral-500 hover:text-black" />
               </button>
             </div>
 
-            <form onSubmit={handleSaveProduct} className="space-y-4 text-xs font-medium">
+            {/* Modal Form Scrollable Body */}
+            <form onSubmit={handleSaveProduct} className="flex-1 overflow-y-auto py-4 space-y-4 text-xs font-medium pr-1">
               <div>
                 <label className="block text-[10px] uppercase text-neutral-500 font-bold mb-1">
                   НАЗВА ТОВАРУ *
@@ -922,7 +1119,7 @@ export default function AdminPage() {
                   placeholder="LENWINE VINTAGE HOODIE"
                   value={productForm.name}
                   onChange={e => setProductForm({ ...productForm, name: e.target.value })}
-                  className="w-full bg-white border border-neutral-300 p-2.5 focus:border-black outline-hidden font-bold"
+                  className="w-full bg-white border border-neutral-300 p-2.5 sm:p-3 text-sm focus:border-black outline-hidden font-bold"
                 />
               </div>
 
@@ -930,7 +1127,7 @@ export default function AdminPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block text-[10px] uppercase text-neutral-500 font-bold mb-1">
-                    БРЕНД (ОБЕРІТЬ АБО ВВЕДІТЬ СВІЙ НОВИЙ)
+                    БРЕНД (ОБЕРІТЬ АБО ВВЕДІТЬ СВІЙ)
                   </label>
                   <input
                     type="text"
@@ -938,7 +1135,7 @@ export default function AdminPage() {
                     placeholder="Наприклад: BALENCIAGA, ERD..."
                     value={productForm.brand}
                     onChange={e => setProductForm({ ...productForm, brand: e.target.value })}
-                    className="w-full bg-white border border-neutral-300 p-2.5 focus:border-black outline-hidden font-bold uppercase"
+                    className="w-full bg-white border border-neutral-300 p-2.5 sm:p-3 focus:border-black outline-hidden font-bold uppercase"
                   />
                   <datalist id="brand-options-list">
                     {Array.from(new Set([...DEFAULT_BRANDS, ...products.map(p => p.brand).filter(Boolean)])).map(b => (
@@ -954,7 +1151,7 @@ export default function AdminPage() {
                   <select
                     value={productForm.clothingType}
                     onChange={e => setProductForm({ ...productForm, clothingType: e.target.value })}
-                    className="w-full bg-white border border-neutral-300 p-2.5 focus:border-black outline-hidden uppercase font-bold"
+                    className="w-full bg-white border border-neutral-300 p-2.5 sm:p-3 focus:border-black outline-hidden uppercase font-bold cursor-pointer"
                   >
                     {CLOTHING_TYPES.filter(t => t.id !== 'all').map(t => (
                       <option key={t.id} value={t.id}>
@@ -976,7 +1173,7 @@ export default function AdminPage() {
                     placeholder="8500"
                     value={productForm.price}
                     onChange={e => setProductForm({ ...productForm, price: e.target.value })}
-                    className="w-full bg-white border border-neutral-300 p-2.5 focus:border-black outline-hidden font-mono font-bold"
+                    className="w-full bg-white border border-neutral-300 p-2.5 sm:p-3 text-sm focus:border-black outline-hidden font-mono font-bold"
                   />
                 </div>
                 <div>
@@ -988,7 +1185,7 @@ export default function AdminPage() {
                     placeholder="9900"
                     value={productForm.originalPrice}
                     onChange={e => setProductForm({ ...productForm, originalPrice: e.target.value })}
-                    className="w-full bg-white border border-neutral-300 p-2.5 focus:border-black outline-hidden font-mono"
+                    className="w-full bg-white border border-neutral-300 p-2.5 sm:p-3 text-sm focus:border-black outline-hidden font-mono"
                   />
                 </div>
                 <div>
@@ -998,7 +1195,7 @@ export default function AdminPage() {
                   <select
                     value={productForm.category}
                     onChange={e => setProductForm({ ...productForm, category: e.target.value })}
-                    className="w-full bg-white border border-neutral-300 p-2.5 focus:border-black outline-hidden uppercase font-bold"
+                    className="w-full bg-white border border-neutral-300 p-2.5 sm:p-3 focus:border-black outline-hidden uppercase font-bold cursor-pointer"
                   >
                     <option value="MEN">HOMME (MEN)</option>
                     <option value="WOMEN">FEMME (WOMEN)</option>
@@ -1017,7 +1214,7 @@ export default function AdminPage() {
                   <select
                     value={productForm.inStock ? 'true' : 'false'}
                     onChange={e => setProductForm({ ...productForm, inStock: e.target.value === 'true' })}
-                    className="w-full bg-white border border-neutral-300 p-2.5 focus:border-black outline-hidden uppercase font-bold"
+                    className="w-full bg-white border border-neutral-300 p-2.5 sm:p-3 focus:border-black outline-hidden uppercase font-bold cursor-pointer"
                   >
                     <option value="true">В НАЯВНОСТІ</option>
                     <option value="false">ПІД ЗАМОВЛЕННЯ</option>
@@ -1033,14 +1230,14 @@ export default function AdminPage() {
                     placeholder="S, M, L, XL"
                     value={productForm.sizes}
                     onChange={e => setProductForm({ ...productForm, sizes: e.target.value })}
-                    className="w-full bg-white border border-neutral-300 p-2.5 focus:border-black outline-hidden font-mono"
+                    className="w-full bg-white border border-neutral-300 p-2.5 sm:p-3 text-sm focus:border-black outline-hidden font-mono"
                   />
                 </div>
               </div>
 
               {/* Direct Gallery Upload & Visual Reorder Section */}
-              <div className="border border-neutral-200 p-4 bg-neutral-50/70 space-y-3">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="border border-neutral-200 p-3.5 sm:p-4 bg-neutral-50/70 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                   <div>
                     <label className="block text-[11px] uppercase text-black font-extrabold tracking-wider">
                       ФОТОГРАФІЇ ТОВАРУ ({productForm.images.length}) *
@@ -1051,9 +1248,9 @@ export default function AdminPage() {
                   </div>
 
                   {/* Device / Gallery Direct Upload Button */}
-                  <label className={`cursor-pointer inline-flex items-center justify-center space-x-2 px-4 py-2.5 bg-black text-white hover:bg-neutral-800 transition-colors font-bold text-xs uppercase tracking-wider shadow-xs ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}>
+                  <label className={`cursor-pointer inline-flex items-center justify-center space-x-2 px-4 py-3 bg-black text-white hover:bg-neutral-800 transition-colors font-bold text-xs uppercase tracking-wider shadow-xs active:scale-[0.99] ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}>
                     <Upload className="w-4 h-4" />
-                    <span>{isUploading ? 'ЗАВАНТАЖЕННЯ...' : '+ ЗАВАНТАЖИТИ З ГАЛЕРЕЇ'}</span>
+                    <span>{isUploading ? 'ЗАВАНТАЖЕННЯ...' : '+ ФОТО З ГАЛЕРЕЇ ТЕЛЕФОНУ'}</span>
                     <input
                       type="file"
                       multiple
@@ -1083,7 +1280,7 @@ export default function AdminPage() {
                   <button
                     type="button"
                     onClick={handleAddUrl}
-                    className="px-3 py-2 bg-neutral-200 hover:bg-neutral-300 text-black font-bold text-xs uppercase transition-colors"
+                    className="px-3 py-2 bg-neutral-200 hover:bg-neutral-300 text-black font-bold text-xs uppercase transition-colors shrink-0 cursor-pointer"
                   >
                     ДОДАТИ
                   </button>
@@ -1091,7 +1288,7 @@ export default function AdminPage() {
 
                 {/* Visual Image Grid with Reorder and Delete Controls */}
                 {productForm.images.length > 0 ? (
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 pt-2">
                     {productForm.images.map((imgUrl, i) => (
                       <div
                         key={i}
@@ -1108,7 +1305,8 @@ export default function AdminPage() {
                             type="button"
                             onClick={() => handleRemoveImage(i)}
                             title="Видалити фото"
-                            className="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white p-1 shadow-md transition-colors"
+                            aria-label="Видалити фото"
+                            className="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white p-1.5 shadow-md transition-colors cursor-pointer"
                           >
                             <X className="w-3.5 h-3.5" />
                           </button>
@@ -1120,7 +1318,7 @@ export default function AdminPage() {
                               type="button"
                               onClick={() => handleReorderImage(i, i - 1)}
                               disabled={i === 0}
-                              className="px-2 py-0.5 bg-neutral-100 hover:bg-neutral-200 disabled:opacity-20 text-neutral-800 border border-neutral-200 transition-colors"
+                              className="px-2.5 py-1 bg-neutral-100 hover:bg-neutral-200 disabled:opacity-20 text-neutral-800 border border-neutral-200 transition-colors cursor-pointer"
                               title="Пересунути лівіше"
                             >
                               ◀
@@ -1129,7 +1327,7 @@ export default function AdminPage() {
                               type="button"
                               onClick={() => handleReorderImage(i, i + 1)}
                               disabled={i === productForm.images.length - 1}
-                              className="px-2 py-0.5 bg-neutral-100 hover:bg-neutral-200 disabled:opacity-20 text-neutral-800 border border-neutral-200 transition-colors"
+                              className="px-2.5 py-1 bg-neutral-100 hover:bg-neutral-200 disabled:opacity-20 text-neutral-800 border border-neutral-200 transition-colors cursor-pointer"
                               title="Пересунути правіше"
                             >
                               ▶
@@ -1143,7 +1341,7 @@ export default function AdminPage() {
                   <div className="text-center py-6 border-2 border-dashed border-neutral-300 bg-white">
                     <ImageIcon className="w-8 h-8 text-neutral-300 mx-auto mb-2" />
                     <p className="text-xs text-neutral-600 font-bold uppercase tracking-wider">Немає фотографій</p>
-                    <p className="text-[10px] text-neutral-400 mt-0.5">Натисніть "+ ЗАВАНТАЖИТИ З ГАЛЕРЕЇ", щоб додати фото з вашого телефону або ПК</p>
+                    <p className="text-[10px] text-neutral-400 mt-0.5">Натисніть "+ ФОТО З ГАЛЕРЕЇ ТЕЛЕФОНУ", щоб вибрати одразу кілька фото</p>
                   </div>
                 )}
               </div>
@@ -1157,22 +1355,23 @@ export default function AdminPage() {
                   placeholder="Преміальний авторський дизайн LENWINE..."
                   value={productForm.description}
                   onChange={e => setProductForm({ ...productForm, description: e.target.value })}
-                  className="w-full bg-white border border-neutral-300 p-2.5 focus:border-black outline-hidden"
+                  className="w-full bg-white border border-neutral-300 p-2.5 sm:p-3 text-xs sm:text-sm focus:border-black outline-hidden"
                 />
               </div>
 
-              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-4 pt-2">
+              {/* Bottom Actions - Sticky/Clean at bottom */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4 pt-3 border-t border-neutral-100">
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="flex-1 bg-black text-white py-3.5 text-xs font-bold uppercase tracking-[0.2em] hover:bg-neutral-800 transition-colors shadow-md disabled:opacity-50 text-center cursor-pointer"
+                  className="flex-1 bg-black text-white py-3.5 text-xs font-bold uppercase tracking-[0.2em] hover:bg-neutral-800 transition-colors shadow-md disabled:opacity-50 text-center cursor-pointer active:scale-[0.99]"
                 >
                   {isSaving ? 'ЗБЕРЕЖЕННЯ...' : editingProduct ? 'ОНОВИТИ ТОВАР' : 'ЗБЕРЕГТИ ТОВАР'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setIsProductModalOpen(false)}
-                  className="px-6 py-3.5 bg-neutral-100 text-neutral-600 hover:text-black hover:bg-neutral-200 text-xs font-bold uppercase tracking-widest transition-colors text-center cursor-pointer"
+                  className="px-6 py-3 bg-neutral-100 text-neutral-600 hover:text-black hover:bg-neutral-200 text-xs font-bold uppercase tracking-widest transition-colors text-center cursor-pointer"
                 >
                   СКАСУВАТИ
                 </button>
