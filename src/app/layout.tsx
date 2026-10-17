@@ -91,7 +91,7 @@ export default function RootLayout({
     logo: 'https://lenwine.site/logo-black.png',
     image: 'https://lenwine.site/logo-black.png',
     description: 'Магазин преміального архівного одягу та взуття: Rick Owens, Balenciaga, ERD, Chrome Hearts, Maison Margiela. Доставка по Україні.',
-    sameAs: ['https://t.me/lenwine'],
+    sameAs: ['https://t.me/flockawerty'],
     currenciesAccepted: 'UAH',
     paymentAccepted: 'Cash, Credit Card, Bank Transfer',
     priceRange: '$$$$',

@@ -239,7 +239,7 @@ export default function Header({ onSearchClick }: HeaderProps) {
                 </button>
 
                 <a
-                  href="https://t.me/lenwine"
+                  href="https://t.me/flockawerty"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block text-xl sm:text-2xl font-black tracking-[0.04em] uppercase text-white hover:text-neutral-400 transition-colors"

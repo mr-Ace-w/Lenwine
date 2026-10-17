@@ -100,7 +100,7 @@ export default function HomePage() {
             <div className="flex flex-wrap items-center justify-center gap-6 text-[10px] sm:text-[11px] font-mono tracking-[0.2em]">
               <Link href="/catalog" className="hover:text-neutral-300 transition-colors">КАТАЛОГ</Link>
               <button onClick={() => setIsSearchOpen(true)} className="hover:text-neutral-300 transition-colors cursor-pointer">ПОШУК</button>
-              <a href="https://t.me/lenwine" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-300 transition-colors">МЕНЕДЖЕР</a>
+              <a href="https://t.me/flockawerty" target="_blank" rel="noopener noreferrer" className="hover:text-neutral-300 transition-colors">МЕНЕДЖЕР</a>
             </div>
           </div>
 
