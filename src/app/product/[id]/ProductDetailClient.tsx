@@ -122,9 +122,9 @@ export default function ProductDetailClient({
       </div>
 
       {/* Main Product Layout */}
-      <section className="max-w-[1700px] mx-auto w-full px-0 sm:px-10 py-3 sm:py-10 flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-16">
+      <section className="max-w-[1700px] mx-auto w-full px-0 sm:px-10 py-3 sm:py-8 flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-14 lg:items-start">
         {/* Left: Gallery Column - Full width on mobile with smooth touch swipe */}
-        <div className="flex flex-col space-y-3 sm:space-y-4 w-full">
+        <div className="flex flex-col space-y-3 sm:space-y-4 w-full lg:sticky lg:top-28">
           {/* Main Swipeable Carousel Container */}
           <div className="relative w-full overflow-hidden bg-white sm:border sm:border-neutral-200">
             {/* Smooth Animated Image Track with pan-y touch-action for unrestricted vertical scrolling */}
@@ -207,8 +207,8 @@ export default function ProductDetailClient({
         </div>
 
         {/* Right: Info & Actions Column (px-4 on mobile for nice margins) */}
-        <div className="flex flex-col justify-between space-y-6 sm:space-y-8 px-4 sm:px-0">
-          <div className="space-y-4 sm:space-y-6">
+        <div className="flex flex-col space-y-6 sm:space-y-7 px-4 sm:px-0">
+          <div className="space-y-4 sm:space-y-5">
             <span className="text-[10px] tracking-[0.25em] font-bold text-neutral-400 uppercase">
               COLLECTION • {product.category}
             </span>
